@@ -395,7 +395,7 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
                       {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
                       <span>{(conversionResult?.fiatAmountAfterFee)} ({conversionResult?.cryptoAmountAfterFee})</span>}
                     </div>
-                    <div className="fees-rap"> <span>Tradibg Bounce</span>  <span>0.000</span></div>
+                    <div className="fees-rap"> <span>Trading Bonus</span>  <span>0.000</span></div>
               </div>}
 
 

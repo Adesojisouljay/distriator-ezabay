@@ -161,6 +161,8 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
     setOpenList(!openList);
   };
 
+  const nairaBalance = user.nairaBalance.toFixed(2)
+
   return (
     <div className={`fadded-container modal-overlay ${isOpen ? 'open' : ''}`}>
       <div className={`modal-overlay  ${isOpen ? 'open' : ''}`} onClick={onClose}> </div>
@@ -193,6 +195,10 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
                   step="any"
                   required
                 />
+                <div className="wrap-in">
+                <span className='fw-balance' >Balance: ₦{nairaBalance}</span>
+                <span className='max' onClick={()=> setWithdrawalAmount(nairaBalance)} >Max</span>
+                </div>
               </div>
               <div className="fw-bank-accounts">
                 <div className='fw-account-select-wrap'>
@@ -243,6 +249,7 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
                   onChange={(e) => setWithdrawalToken(e.target.value)}
                   required
                 />
+                <span className='check-email-token'>Check email for Withdrawal token.</span>
               </div>
               <div className="token-info">
                 {timeRemaining > 0 && (

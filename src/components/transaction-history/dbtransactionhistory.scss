@@ -175,8 +175,6 @@
         text-align: left;
         border-bottom: 1px solid;
         border-color: rgba(229, 229, 229, 0.1);
-        // padding-left: 26px;
-        // padding-right: 26px;
         @include respond(phone) {
           padding-left: 7px;
           padding-right: 7px;
@@ -187,7 +185,6 @@
       }
     
       tbody tr:nth-child(odd) {
-        // background-color: red; // White background for odd rows
         background: linear-gradient(
               127deg,
               hsla(0, 0%, 100%, 0.16) 17.35%,
@@ -199,7 +196,6 @@
         justify-content: center;
         align-items: center;
         gap: 7px;
-        // margin: 10px 0px;
         margin-bottom: 30px;
         .transaction-history__page-btn{
             padding: 5px 10px;
@@ -209,91 +205,10 @@
             border-radius: 15px;
         }
       }
+
+      .phone-none{
+        @include respond(phone) {
+          display: none;
+        }
+      }
 }
-
-//  .transaction-history__header{
-//     h3{
-//         text-align: center;
-//         font-size: 25px;
-//         margin-bottom: 10px;
-//     }
-//     @include respond(phone) {
-//       font-size: 18px;
-//     }
-//  } 
-  
-// .table-wrap {
-//     margin-top: 20px;
-//     max-height: 200px; 
-//     overflow-y: auto;
-//     h3 {
-//       padding-left: 30px;
-//       text-align: center;
-//     }
-//   }
-//   .table-wrap th {
-//     background-color: rgb(29 35 43 ); 
-//     position: sticky;
-//     top: 0; 
-//     z-index: 1; 
-//   }
-//   .no-history{
-//     text-align: center;
-//     height: 100px; /* Adjust height as needed */
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     width: 100%;
-  
-//   }
-//   thead {
-//     background: #2e2c2c !important;
-//   }
-  
-//   table {
-//     width: 100%;
-//     border-collapse: collapse;
-//     padding: 0px 30px;
-//     background-color: rgba(229, 229, 229, 0.1);
-//   }
-  
-//   th,
-//   td {
-//     padding: 8px;
-//     text-align: left;
-//     border-bottom: 1px solid;
-//     border-color: rgba(229, 229, 229, 0.1);
-//     // padding-left: 26px;
-//     // padding-right: 26px;
-//     @include respond(phone) {
-//       padding-left: 7px;
-//       padding-right: 7px;
-//     }
-//   }
-//   tbody tr:nth-child(even) {
-//     background-color: transparent; // Light gray background for even rows
-//   }
-
-//   tbody tr:nth-child(odd) {
-//     // background-color: red; // White background for odd rows
-//     background: linear-gradient(
-//           127deg,
-//           hsla(0, 0%, 100%, 0.16) 17.35%,
-//           hsla(0, 0%, 85%, 0.04) 76.2%
-//         );
-//   }
-//   .transaction-history__pagination{
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     gap: 7px;
-//     // margin: 10px 0px;
-//     margin-bottom: 30px;
-//     .transaction-history__page-btn{
-//         padding: 5px 10px;
-//         background-color: rgb(28 100 224);
-//         color: #fff;
-//         margin: 10px 0px;
-//         border-radius: 15px;
-//     }
-//   }

@@ -67,6 +67,26 @@
         box-shadow: 0 0 0 3px rgba(0, 105, 255, 0.16);
       }
     }
+    .wrap-in{
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+
+      .fw-balance{
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .max{
+        color: orange;
+        font-size: 12px;
+      }
+    }
+    .check-email-token{
+      color: orange;
+      font-size: 12px;
+      margin-top: 10px;
+    }
   }
 
   .fw-account-select-wrap{

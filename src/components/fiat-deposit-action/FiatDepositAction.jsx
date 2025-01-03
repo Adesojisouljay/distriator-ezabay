@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { confirmFiatDeposit, cancelFiatDeposit, getAllFiatDeposits, getMerchantById } from '../../api/ekzat';
 import "./fiat-deposit-action.scss";
+import FiatActionList from '../modal/FiatActionList';
 
 export const FiatDepositAction = () => {
   const user = useSelector((state) => state.ekzaUser.user);
@@ -10,11 +11,13 @@ export const FiatDepositAction = () => {
   const [filteredDeposits, setFilteredDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [merchantInfo, setMerchantInfo] = useState(null)
+  const [merchantInfo, setMerchantInfo] = useState(null);
+  const [listModal, setListModal] = useState(false);
+  const [listData, setListData] = useState(null);
 
   useEffect(() => {
     fetchDeposits();
-    getMerchant()
+    getMerchant();
   }, []);
 
   useEffect(() => {
@@ -42,14 +45,14 @@ export const FiatDepositAction = () => {
 
   const getMerchant = async () => {
     try {
-      const res = await getMerchantById()
-      if(res.success) {
-        setMerchantInfo(res.data)
+      const res = await getMerchantById();
+      if (res.success) {
+        setMerchantInfo(res.data);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleConfirmDeposit = async (depositId) => {
     try {
@@ -63,6 +66,7 @@ export const FiatDepositAction = () => {
         },
       });
       fetchDeposits();
+      setListModal(false); // Close modal after confirming
     } catch (error) {
       toast.error('Failed to confirm deposit', {
         style: {
@@ -87,6 +91,7 @@ export const FiatDepositAction = () => {
         },
       });
       fetchDeposits();
+      setListModal(false); // Close modal after canceling
     } catch (error) {
       toast.error('Failed to cancel deposit', {
         style: {
@@ -99,30 +104,8 @@ export const FiatDepositAction = () => {
     }
   };
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'status-pending';
-      case 'completed':
-        return 'status-completed';
-      case 'failed':
-        return 'status-failed';
-      default:
-        return '';
-    }
-  };
-
-  const getStatusEmoji = (status) => {
-    switch (status) {
-      case 'pending':
-        return '🕒';
-      case 'completed':
-        return '✅';
-      case 'failed':
-        return '❌';
-      default:
-        return '';
-    }
+  const handleCloseModal = () => {
+    setListModal(false);
   };
 
   const handleSearchChange = (event) => {
@@ -136,6 +119,30 @@ export const FiatDepositAction = () => {
     );
     setFilteredDeposits(filtered);
   };
+  const getStatusEmoji = (status) => {
+  switch (status) {
+    case 'pending':
+      return '🕒';
+    case 'completed':
+      return '✅';
+    case 'failed':
+      return '❌';
+    default:
+      return '';
+  }
+};
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'status-pending';
+    case 'completed':
+      return 'status-completed';
+    case 'failed':
+      return 'status-failed';
+    default:
+      return '';
+  }
+};
 
   return (
     <div className="fiat-deposit-list">
@@ -152,11 +159,11 @@ export const FiatDepositAction = () => {
         <p>Loading deposits...</p>
       ) : (
         <>
-        <div className='merchant-fund-info'>
-          <h2>Balance:{merchantInfo?.merchantBalance}</h2>
-          <h2>Total spent:{merchantInfo?.totalSpent}</h2>
-          <h2>Last Toped:{merchantInfo?.lastTopped}</h2>
-        </div>
+          <div className="merchant-fund-info">
+            <h2>Balance: {merchantInfo?.merchantBalance}</h2>
+            <h2>Total Spent: {merchantInfo?.totalSpent}</h2>
+            <h2>Last Topped: {merchantInfo?.lastTopped}</h2>
+          </div>
           <table className="deposits-table">
             <thead>
               <tr>
@@ -173,7 +180,13 @@ export const FiatDepositAction = () => {
             <tbody>
               {filteredDeposits.length > 0 ? (
                 filteredDeposits.map((deposit, index) => (
-                  <tr key={deposit._id}>
+                  <tr
+                    key={deposit._id}
+                    onClick={() => {
+                      setListModal(true);
+                      setListData(deposit);
+                    }}
+                  >
                     <td>{index + 1}</td>
                     <td>{deposit.amount}</td>
                     <td>{deposit.narration}</td>
@@ -201,9 +214,7 @@ export const FiatDepositAction = () => {
                         </>
                       )}
                       {deposit.status !== 'pending' && (
-                        <span className="status-emoji">
-                          {getStatusEmoji(deposit.status)}
-                        </span>
+                        <span className="status-emoji">{getStatusEmoji(deposit.status)}</span>
                       )}
                     </td>
                   </tr>
@@ -216,6 +227,15 @@ export const FiatDepositAction = () => {
             </tbody>
           </table>
         </>
+      )}
+      {listModal && (
+        <FiatActionList
+          deposit={listData}
+          isOpen={listModal}
+          onClose={handleCloseModal}
+          handleConfirmDeposit={handleConfirmDeposit}
+          handleCancelDeposit={handleCancelDeposit}
+        />
       )}
     </div>
   );

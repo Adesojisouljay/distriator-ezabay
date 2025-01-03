@@ -13,6 +13,7 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
   const [message, setMessage] = useState('');
   const [step, setStep] = useState(1);
   const [fee, setFee] = useState(0.000)
+  const [disableBtn, setDisableBtn] = useState(false)
 
   
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
@@ -57,13 +58,17 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
   };
 
   const getToken = async () => {
+    setDisableBtn(true)
+
     try {
+      console.log(disableBtn)
       const data = await requestToken();
       if(data?.success === true){
         setStep(2)
       }
     } catch (error) {
       console.log(error)
+      setDisableBtn(false)
     }
   }
 
@@ -177,7 +182,7 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
                 placeholder="Enter memo"
               />
             </>}
-            <button className="withdraw-btn" onClick={getToken}>Withdraw</button>
+            <button className="withdraw-btn" onClick={getToken} disabled={disableBtn}>Withdraw</button>
             </> : <div className="withdrawal-info-wrapper">
             <h3 className='warning'>{selectedAsset?.currency}({selectedAsset?.symbol?.toUpperCase()}) withdrawal is coming soon...</h3>
             <span className='withdrawal-address-info-el'>No address/network available for this asset yet</span>
@@ -194,6 +199,7 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
             onChange={(e) => setWithdrawalToken(e.target.value)}
             placeholder="Enter withdrawal token"
           />
+          <div className="checktoken">Check email for Withdrawal token.</div>
           <button className="withdraw-btn" onClick={handleGeneralWithdrawal}>Withdraw</button>
         </div>}
         {step === 3 && <div className="">
