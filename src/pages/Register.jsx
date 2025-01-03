@@ -156,6 +156,7 @@ const Register = () => {
                   handleOpenList={handleOpenList} 
                   openList={openCountryList}
                   itemName={selectedCountry}
+                  selectLabal="country"
                 />
           </div>
           

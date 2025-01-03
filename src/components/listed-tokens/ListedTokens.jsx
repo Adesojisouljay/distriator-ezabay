@@ -13,11 +13,11 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
     const [filteredData, setFilteredData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const currencySymbol = global.currency.selectedCurrency === "USD" ? "$" : "₦";
+    const currency = global.currency.selectedCurrency
 
     useEffect(() => {
         getCryptoData();
-    }, [global.currency.selectedCurrency]);
+    }, [currency]);
 
     useEffect(() => {
         filterCryptoData();
@@ -26,13 +26,16 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
     const getCryptoData = async () => {
         try {
             const response = await fetchCryptoData();
+            console.log(response)
     
             if (response?.data?.success) {
-                const { usdData, ngnData } = response.data.cryptoData;
-                if (global.currency.selectedCurrency === "USD") {
+                const { usdData, ngnData, mxnData } = response.data.cryptoData;
+                if (currency.country === "Usa") {
                     setCryptoData(usdData);
-                } else {
+                } else if (currency.country === "Nigeria") {
                     setCryptoData(ngnData);
+                } else if (currency.country === "Mexico") {
+                    setCryptoData(mxnData);
                 }
             } else {
                 console.error('Failed to fetch data:', response?.data?.message);
@@ -47,7 +50,7 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
     };
 
     const filterCryptoData = () => {
-        const filtered = cryptoData.filter(coin => 
+        const filtered = cryptoData?.filter(coin => 
             coin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             coin.id.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -60,7 +63,7 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
             <div className="listed-token-grid">
                 {loading && <p className="listed-tokens-loading">Loading...</p>}
                 {error && <p className="listed-tokens-error">{error}</p>}
-                {!loading && !error && filteredData.map((coin) => {
+                {!loading && !error && filteredData?.map((coin) => {
                     const percentageChangeClass = coin.price_change_percentage_24h >= 0 
                         ? 'positive-change' 
                         : 'negative-change';
@@ -75,7 +78,7 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
                                 <div className="token-content-wrap">
                                 <Link to={`/coin/${coin.id}`} className="token-name-link">
                                         {coin.name}
-                                    </Link> <span className="token-price">{currencySymbol}{formatNumberWithCommas(coin.current_price)}</span>
+                                    </Link> <span className="token-price">{currency.sign}{formatNumberWithCommas(coin.current_price)}</span>
                                 </div>
                                 <div className={`token-content-wrap ${percentageChangeClass}`}>
                                     <span className="token-symbol">{coin?.symbol.toUpperCase()}</span>

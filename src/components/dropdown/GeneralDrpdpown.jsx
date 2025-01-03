@@ -5,7 +5,8 @@ import Usa from "../../assets/Usa.webp"
 import "./general.scss"
 
 export const GeneralDropdown = (props) => {
-    const { items, handleOpenList, setSelectedItem, itemName, openList } = props;
+    const { items, handleOpenList, setSelectedItem, itemName, openList, selectLabal } = props;
+    console.log(itemName)
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredItems = items?.filter(item =>
@@ -15,20 +16,19 @@ export const GeneralDropdown = (props) => {
   return (
     <div className='gd-container'>
         <div className="gd-item-select-wrap" onClick={handleOpenList}>
-            {itemName === "NGN" ? 
-            <img className='gd-select-image' src={nigeria} alt="" /> : 
-            itemName === "USD" ? 
-            <img className='gd-select-image' src={Usa} alt="" /> : 
+            { itemName?.image ?
+            <img className='gd-select-image' src={itemName?.image} alt="" /> :
+            // we can use the selectLabel to decide which image to show here for country and bank account
             <RiBankFill size={24} />
             }
-            <span className='gd-select-title'>{itemName || "Select Country"}</span>
+            <span className='gd-select-title'>{itemName?.name || `Select ${selectLabal}`}</span>
             <RiArrowDownSFill  size={24}/>
         </div>
         {(openList && items?.length > 6) && 
        <input 
             className={`dropdown-search-input ${"openlist"} `}
             type="text"
-            placeholder='Search...'
+            placeholder={`Search ${selectLabal}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
@@ -40,7 +40,7 @@ export const GeneralDropdown = (props) => {
                 <div 
                     className="gd-item-picker"
                     onClick={() => {
-                        setSelectedItem(item.name || item);
+                        setSelectedItem(item);
                         handleOpenList();
                     }}
                 >

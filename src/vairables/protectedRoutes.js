@@ -1,5 +1,6 @@
 import nigeria from "../assets/nigria.png"
 import Usa from "../assets/Usa.webp"
+import Mexico from "../assets/mexico.png"
 
 export  const protectedRoutesArray = [
     '/dashboard',
@@ -17,14 +18,22 @@ export  const protectedRoutesArray = [
 
   export const currenciesList = [
     {
+      country: "Nigeria",
       name: "NGN",
       sign: "₦",
       image: nigeria
     },
     {
+      country: "Usa",
       name: "USD",
       sign: "$",
       image: Usa
+    },
+    {
+      country: "Mexico",
+      name: "MXN",
+      sign: "MX$",
+      image: Mexico
     }
   ]
 

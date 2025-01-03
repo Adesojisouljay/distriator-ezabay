@@ -138,7 +138,9 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
               type="text"
               placeholder="Recipient Address"
               value={to}
-              onChange={(e) => setTo(e.target.value.toLowerCase())}
+
+              ////convert to lowercase only if it is hive
+              onChange={(e) => setTo(e.target.value)}
               id="recipient-account"
             />
            </div>
