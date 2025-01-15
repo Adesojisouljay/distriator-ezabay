@@ -40,6 +40,7 @@ import { Profile } from "./pages/ProfilePage";
 import { HiveOnboard } from "./components/hive-onboard/HiveOnboard";
 import { SpendHbd } from "./components/spend-hbd/SpendHbd";
 import { SingleCommunityPost } from "./components/single-post/singleCommunityPost";
+import { HivelionaireGame } from "./components/games/hiveLoniare";
 
 function App() {
   const user = useSelector((state) => state.ekzaUser);
@@ -92,6 +93,7 @@ function App() {
             {/* <Route path="/manage-kyc" element={<KYCManagement />} /> */}
             {/* <Route path="/merchant-action" element={<MerchantAction />} /> */}
             <Route path="/create-merchant" element={<CreateMerchantForm />} />
+            <Route path="/hive-quiz" element={<HivelionaireGame />} />
             {/* <Route path="/accounts" element={<BankAccount />} /> */}
             {/* <Route path="/fiat-withdrawal-action" element={<FiatWithdrawalAction />} /> */}
             {/* <Route path="/fiat-deposit-action" element={<FiatDepositAction />} /> */}
