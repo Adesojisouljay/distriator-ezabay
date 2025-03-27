@@ -7,13 +7,14 @@ import "./dashboard.scss";
 import { WithdrawalModal } from "../components/modal/WithdrawalModal";
 import Fiatdeposit from "../components/modal/Fiatdeposit";
 import { FiatTransferModal } from "../components/modal/FiatTransfer";
+import { SendOptions } from "../components/modal/sendOptions";
 import { BuySellModal } from "../components/modal/BuyAndSell";
 import { FiatWithdrawalModal } from "../components/modal/FiatWithdrawal";
 import { setCurrency } from "../redux/currencySlice";
 import { usdPrice, formatNumberWithCommas } from "../utils";
 import { ListedTokens } from "../components/listed-tokens/ListedTokens";
 import { HiCircleStack, HiArrowUpCircle, HiArrowDownCircle, HiMiniShoppingCart, HiFolderPlus, HiFolderMinus } from "react-icons/hi2"
-import { TransactionHistory } from "../components/transaction-history/TransactionHistory";
+// import { TransactionHistory } from "../components/transaction-history/TransactionHistory";
 import { FiSearch } from "react-icons/fi";
 import DBTransctionHistory from "../components/transaction-history/DBTransctionHistory";
 import { BuySell } from "../components/modal/BuySell";
@@ -42,6 +43,7 @@ export const Dashboard = () => {
   const [searchQueryCoinPrice, setSearchQueryCoinPrice] = useState('');
   const [showMore, setShowMore] = useState(false)
   const [buySellOpen, setBuySellOpen] = useState(false);
+  const [sendOptionsOpen, setSendOptionsOpen] = useState(false);
   const [openList, setOpenList] = useState(false);
   const [assetOpen, setAssetOpen] = useState(false)
   const [toggle, setToggle] = useState(true)
@@ -117,11 +119,21 @@ export const Dashboard = () => {
     setTransactionType(type);
     setBuySellOpen(true);
   };
+
   const closeBuySellModal = () => {
     setBuySellOpen(false);
   };
+  
   const closeTrxListModal = () => {
     setTrxListOpen(false);
+  };
+
+  const closeSendOptionModal = () => {
+    setSendOptionsOpen(false);
+  };
+
+  const openSendOptionModal = () => {
+    setSendOptionsOpen(true);
   };
 
 
@@ -188,7 +200,8 @@ export const Dashboard = () => {
             <div className="bal-btn-wrap-main"> 
 
             <div className="bal-btn-wrap">
-            <span className="bal-btn" onClick={openWithdrawalModal}>
+            <span className="bal-btn" onClick={openSendOptionModal}>
+            {/* <span className="bal-btn" onClick={openWithdrawalModal}> */}
                 <div className="bal-icon-wrap">
                 <HiArrowUpCircle size={30} />
                 </div>
@@ -381,6 +394,12 @@ export const Dashboard = () => {
       {fiatDepositOpen && <Fiatdeposit onClose={closeFiatDepositModal} isOpen={fiatDepositOpen} />}
       {fiatWithdrawalOpen && <FiatWithdrawalModal onClose={closeFiatWithdrawalModal} isOpen={fiatWithdrawalOpen} assets={assets} />}
       {trxListOpen && <TransactionList isOpen={trxListOpen} onClose={closeTrxListModal} trxListData={trxListData} />}
+      {sendOptionsOpen && 
+      <SendOptions 
+        onClose={closeSendOptionModal} 
+        isOpen={openSendOptionModal}
+        openOnchain={openWithdrawalModal}
+      />}
     </div>
   );
 }
