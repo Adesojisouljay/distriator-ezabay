@@ -6,7 +6,7 @@ import { DepositHiveModal } from "../components/modal/DepositHive";
 import "./dashboard.scss";
 import { WithdrawalModal } from "../components/modal/WithdrawalModal";
 import Fiatdeposit from "../components/modal/Fiatdeposit";
-import { DepositModal } from "../components/modal/FiatTransfer";
+import { FiatTransferModal } from "../components/modal/FiatTransfer";
 import { BuySellModal } from "../components/modal/BuyAndSell";
 import { FiatWithdrawalModal } from "../components/modal/FiatWithdrawal";
 import { setCurrency } from "../redux/currencySlice";
@@ -222,6 +222,13 @@ export const Dashboard = () => {
                 <span>Withdraw</span>
               </span>
 
+              <span className="bal-btn" onClick={openFiatTransferModal}>
+                <div className="bal-icon-wrap">
+                <HiFolderMinus size={27} />
+                </div>
+                <span>Fiat transfer</span>
+              </span>
+
             </div>
             </div>
 
@@ -370,7 +377,7 @@ export const Dashboard = () => {
         onClose={closeWithdrawalModal}
         user={user}
       />}
-      {fiatTransferOpen && <DepositModal isOpen={fiatTransferOpen} onClose={closeFiatTransferModal} />}
+      {fiatTransferOpen && <FiatTransferModal isOpen={fiatTransferOpen} onClose={closeFiatTransferModal} />}
       {fiatDepositOpen && <Fiatdeposit onClose={closeFiatDepositModal} isOpen={fiatDepositOpen} />}
       {fiatWithdrawalOpen && <FiatWithdrawalModal onClose={closeFiatWithdrawalModal} isOpen={fiatWithdrawalOpen} assets={assets} />}
       {trxListOpen && <TransactionList isOpen={trxListOpen} onClose={closeTrxListModal} trxListData={trxListData} />}
