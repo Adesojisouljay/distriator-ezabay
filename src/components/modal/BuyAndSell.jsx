@@ -192,7 +192,7 @@ export const BuySellModal = ({
  ]
   return (
     <div className={`fadded-container modal-overlay ${isOpen ? "open" : ""}`}>
-      <div
+      {/* <div
         className={`modal-overlay  ${isOpen ? "open" : ""}`}
         onClick={onClose}
       >
@@ -332,7 +332,7 @@ export const BuySellModal = ({
           )}
 
         
-      </div>
+      </div> */}
     </div>
   );
 };

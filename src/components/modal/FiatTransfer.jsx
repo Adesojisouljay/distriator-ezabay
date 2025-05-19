@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { fiatTransfer } from '../../api/ekzat';
+import { fiatTransfer, requestToken } from '../../api/ekzat';
 import { getUserProfile, getReceiverProfile } from '../../api/profile';
 import { Loader } from '../loader/Loader';
 import "./fiatransfer.scss";
@@ -13,6 +13,13 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [receiverInfo, setReceiverInfo] = useState(null);
   const debounceTimeout = useRef(null); // Store timeout reference
+
+  ////////////////
+  const [withdrawalToken, setWithdrawalToken] = useState("");
+  const [requestedToken, setRequestedToken] = useState(false);
+  const [tokenExpiry, setTokenExpiry] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(0);
 
   const notAllowed = loading || !receiver || !amount;
 
@@ -32,6 +39,22 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
 
     return () => clearTimeout(debounceTimeout.current); // Cleanup on unmount
   }, [receiver]);
+
+  useEffect(() => {
+    let timer;
+    if (tokenExpiry && isOpen) {
+      timer = setInterval(() => {
+        const now = Date.now();
+        const timeLeft = Math.max(0, Math.floor((tokenExpiry - now) / 1000));
+        setTimeRemaining(timeLeft);
+
+        if (timeLeft === 0) {
+          clearInterval(timer);
+        }
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [tokenExpiry, isOpen]);
 
   const getReceiver = async () => {
     setLoading(true);
@@ -67,12 +90,65 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleRequestToken = async () => {
+    if (!amount) {
+      toast.error("Please enter a withdrawal amount.", {
+        style: {
+          backgroundColor: "rgba(229, 229, 229, 0.1)",
+          color: "#fff",
+          fontSize: "16px",
+          marginTop: "60px",
+        },
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await requestToken();
+      if (response.success) {
+        toast.success("Withdrawal token sent to your email", {
+          style: {
+            backgroundColor: "rgba(229, 229, 229, 0.1)",
+            color: "#fff",
+            fontSize: "16px",
+            marginTop: "60px",
+          },
+        });
+        setRequestedToken(true);
+        const expiryTime = Date.now() + 15 * 60 * 1000;
+        setTokenExpiry(expiryTime);
+        setTimeRemaining(15 * 60);
+      } else {
+        toast.error(response.message || "Failed to request withdrawal token", {
+          style: {
+            backgroundColor: "rgba(229, 229, 229, 0.1)",
+            color: "#fff",
+            fontSize: "16px",
+            marginTop: "60px",
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Failed to request withdrawal token", {
+        style: {
+          backgroundColor: "rgba(229, 229, 229, 0.1)",
+          color: "#fff",
+          fontSize: "16px",
+          marginTop: "60px",
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={`f-t-modal-overlay ${isOpen ? 'open' : ''}`}>
       <div className={`f-t-modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}> </div>
       <div className="f-t-modal">
         <span className="close-modal" onClick={onClose}>X</span>
-        <div className="fiattransfer-container">
+       {!requestedToken ? <div className="fiattransfer-container">
           <h2>Transfer Fiat</h2>
           {loading && <Loader />}
           <div className="ftr-input-group">
@@ -104,11 +180,59 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
             style={{ cursor: notAllowed ? "not-allowed" : "pointer" }}
             disabled={notAllowed}
             className="deposit-btn"
-            onClick={handleFiatTransfer}
+            onClick={handleRequestToken}
           >
-            Proceed
+            Proceed(requested token)
           </button>
-        </div>
+        </div> :
+        <div className='fiat-transfer-token'>
+          <div className="withdrawal-token">
+            <label htmlFor="token">Withdrawal Token:</label>
+            <input
+              className="withrawal-amount-input"
+              id="token"
+              type="text"
+              value={withdrawalToken}
+              onChange={(e) => setWithdrawalToken(e.target.value)}
+              required
+            />
+            <span className="check-email-token">
+              Check email for Withdrawal token.
+            </span>
+          </div>
+          <div className="token-info">
+            {timeRemaining > 0 && (
+              <p>
+                Token expires in {Math.floor(timeRemaining / 60)}:
+                {timeRemaining % 60} minutes
+              </p>
+            )}
+            {timeRemaining === 0 && (
+              <button
+                className="resend-token-btn"
+                onClick={handleRequestToken}
+                disabled={isLoading || !amount}
+              >
+                {isLoading
+                  ? "Requesting Token..."
+                  : "Request New Token"}
+              </button>
+            )}
+          </div>
+          <button
+            className="submit-btn"
+            onClick={handleFiatTransfer}
+            disabled={
+              isLoading ||
+              !withdrawalToken ||
+              !amount
+            }
+          >
+            {isLoading
+              ? "Processing Withdrawal..."
+              : "Submit Withdrawal"}
+          </button>
+        </div>}
       </div>
     </div>
   );
