@@ -77,7 +77,6 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
   setMessage("");
 
     try {
-      console.log(disableBtn)
       const data = await requestToken();
       if(data?.success === true){
         setStep(2)

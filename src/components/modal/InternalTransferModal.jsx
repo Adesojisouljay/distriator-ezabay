@@ -12,8 +12,6 @@ import { Loader } from '../loader/Loader';
 export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
     const dispatch = useDispatch();
 
-    console.log(assets)
-
   const [memo, setMemo] = useState('');
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState('');
@@ -31,8 +29,6 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [openList, setOpenList] = useState(false)
   const [displaySearch , setDisplaySearch] = useState(false);
-
-  console.log(selectedAsset)
 
   useEffect(() => {
     if (!receiver) {
@@ -62,7 +58,6 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
     setMessage("");
 
     try {
-      console.log(disableBtn)
       const data = await requestToken();
       if(data?.success === true){
         setStep(2)
@@ -78,11 +73,9 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
   };
 
     const getReceiver = async () => {
-        console.log(receiver)
         setLoading(true);
         try {
             const data = await getReceiverProfile(receiver);
-            console.log(data === null)
             if(!data) {
                 setDisableBtn(true)
                 setReceiverInfo(null);
@@ -102,7 +95,6 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
     }
 
     const handleTransfer = async () => {
-        console.log(selectedAsset?.currency, amount)
         try {
           const result = await internalTransfer({
             to: receiver,
@@ -120,6 +112,9 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
 
         } catch (error) {
           console.error('Transfer failed:', error.message);
+          toast.error(error.message, {
+            style: { backgroundColor: 'rgba(229, 229, 229, 0.1)', color: '#fff', fontSize: '16px', marginTop: "60px" },
+          });
           // Optionally show error to user
         }
       };
