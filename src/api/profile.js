@@ -30,6 +30,7 @@ export const getUserProfile = async (dispatch) => {
 export const getReceiverProfile = async (receiver) => {
   try {
     const response = await api.get(`/auth/receiver-profile/${receiver}`);
+    console.log("data.....",response)
     
     if (response.data.success) {
       return response.data.user;

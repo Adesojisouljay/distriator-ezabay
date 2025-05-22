@@ -528,3 +528,28 @@ export const getTransactionFees = async (coinId, fromAddress = null, toAddress =
       throw error.response.data;
   }
 };
+
+export const internalTransfer = async ({ to, amount, currency, memo, withdrawalToken }) => {
+  try {
+    const response = await api.post(
+      '/withdrawals/internal-transfer',
+      {
+        to,
+        amount,
+        currency,
+        memo,
+        withdrawalToken,
+      },
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error making internal transfer:', error);
+    throw error.response?.data || { message: 'Internal transfer failed' };
+  }
+};

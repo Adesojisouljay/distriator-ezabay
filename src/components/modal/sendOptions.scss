@@ -1,0 +1,22 @@
+.send-options-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .options-wrapper{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 5px;
+    }
+
+    .options-picker{
+        border: 1px solid rgb(42 51 62);
+        padding: 15px;
+        cursor: pointer;
+
+        .picker-info{
+            color: gold;
+        }
+    }
+}

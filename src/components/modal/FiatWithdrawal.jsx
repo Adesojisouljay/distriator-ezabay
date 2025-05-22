@@ -54,6 +54,17 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
       });
       return;
     }
+    if (withdrawalAmount < 500) {
+      toast.error("Amount can not be less than 500.", {
+        style: {
+          backgroundColor: "rgba(229, 229, 229, 0.1)",
+          color: "#fff",
+          fontSize: "16px",
+          marginTop: "60px",
+        },
+      });
+      return;
+    }
 
     try {
       setIsLoading(true);
