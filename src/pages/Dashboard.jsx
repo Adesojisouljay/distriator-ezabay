@@ -21,6 +21,7 @@ import { BuySell } from "../components/modal/BuySell";
 import { currenciesList } from "../vairables/protectedRoutes";
 import { GeneralDropdown } from "../components/dropdown/GeneralDrpdpown";
 import TransactionList from "../components/modal/TransactionList";
+import { InternalTransferModal } from "../components/modal/InternalTransferModal";
 
 export const Dashboard = () => {
   const user = useSelector((state) => state.ekzaUser?.user);
@@ -32,6 +33,7 @@ export const Dashboard = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [withdrawalOpen, setWithdrawalOpen] = useState(false);
+  const [internalWithdrawalOpen, setInternalWithdrawalOpen] = useState(false);
   const [trxListOpen, setTrxListOpen] = useState(false)
   const [action, setAction] = useState(false);
   const [fiatDepositOpen, setFiatDepositOpen] = useState(false);
@@ -102,9 +104,17 @@ export const Dashboard = () => {
   const openWithdrawalModal = (asset) => {
     setWithdrawalOpen(true);
   };
-
+  
+  const openInternalWithdrawalModal = (asset) => {
+    setInternalWithdrawalOpen(true);
+  };
+  
   const closeWithdrawalModal = () => {
     setWithdrawalOpen(false);
+  };
+
+  const closeInternalWithdrawalModal = (asset) => {
+    setInternalWithdrawalOpen(false);
   };
 
   const openFiatWithdrawalModal = () => {
@@ -390,14 +400,25 @@ export const Dashboard = () => {
         onClose={closeWithdrawalModal}
         user={user}
       />}
+
+      {internalWithdrawalOpen && 
+      <InternalTransferModal 
+        isOpen={openInternalWithdrawalModal}
+        assets={assets} 
+        onClose={closeInternalWithdrawalModal}
+        user={user}
+      />}
+      
       {fiatTransferOpen && <FiatTransferModal isOpen={fiatTransferOpen} onClose={closeFiatTransferModal} />}
       {fiatDepositOpen && <Fiatdeposit onClose={closeFiatDepositModal} isOpen={fiatDepositOpen} />}
       {fiatWithdrawalOpen && <FiatWithdrawalModal onClose={closeFiatWithdrawalModal} isOpen={fiatWithdrawalOpen} assets={assets} />}
       {trxListOpen && <TransactionList isOpen={trxListOpen} onClose={closeTrxListModal} trxListData={trxListData} />}
       {sendOptionsOpen && 
       <SendOptions 
-        onClose={closeSendOptionModal} 
         isOpen={openSendOptionModal}
+        onClose={closeSendOptionModal}
+        internalOpen={openInternalWithdrawalModal}
+        // inrernalClose={closeInternalWithdrawalModal}
         openOnchain={openWithdrawalModal}
       />}
     </div>

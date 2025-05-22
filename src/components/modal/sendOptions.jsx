@@ -2,10 +2,14 @@ import React from 'react';
 import "./fiatransfer.scss"; ////should be removed when modal styles are properly added to sendOptions.scss////
 import "./sendOptions.scss";
 
-export const SendOptions = ({ isOpen, onClose, openOnchain }) => {
+export const SendOptions = ({ isOpen, onClose, openOnchain, internalOpen }) => {
 
     const openOnchainModal = () => {
         openOnchain()
+        onClose()
+    }
+    const openInternalModal = () => {
+      internalOpen()
         onClose()
     }
  
@@ -18,7 +22,7 @@ export const SendOptions = ({ isOpen, onClose, openOnchain }) => {
           <h2>Select withdrawal option</h2>
           <div className="options-wrapper">
             <div className="options-picker" 
-                // onClick={openOnchainModal}
+                onClick={openInternalModal}
             >
                 <p>Click this option to make a withdrawal to an Ezabay user</p>
                 <span className='picker-info'>Recommened for withdrawals within Ezabay</span>

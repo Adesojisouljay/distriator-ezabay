@@ -21,7 +21,7 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
   
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [openList, setOpenList] = useState(false)
-  const  [displaySearch , setDisplaySearch] = useState(false)
+  const [displaySearch , setDisplaySearch] = useState(false)
   
   useEffect(() => {
     handleGetFees(selectedAsset?.currency)
@@ -89,10 +89,6 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
     }
   }
 
-  const handleAssetChange = (e) => {
-    const asset = assets?.find(asset => asset?.currency === e.target.value);
-    setSelectedAsset(asset);
-  };
 
   const handleOpencoinList = () => {
     setOpenList(!openList);
