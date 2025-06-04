@@ -16,12 +16,14 @@ import { ListedTokens } from "../components/listed-tokens/ListedTokens";
 import { HiCircleStack, HiArrowUpCircle, HiArrowDownCircle, HiMiniShoppingCart, HiFolderPlus, HiFolderMinus } from "react-icons/hi2"
 // import { TransactionHistory } from "../components/transaction-history/TransactionHistory";
 import { FiSearch } from "react-icons/fi";
+import { CgMoreO } from "react-icons/cg";
 import DBTransctionHistory from "../components/transaction-history/DBTransctionHistory";
 import { BuySell } from "../components/modal/BuySell";
 import { currenciesList } from "../vairables/protectedRoutes";
 import { GeneralDropdown } from "../components/dropdown/GeneralDrpdpown";
 import TransactionList from "../components/modal/TransactionList";
 import { InternalTransferModal } from "../components/modal/InternalTransferModal";
+import { ComingSoon } from "../components/modal/CommingSoon";
 
 export const Dashboard = () => {
   const user = useSelector((state) => state.ekzaUser?.user);
@@ -49,7 +51,8 @@ export const Dashboard = () => {
   const [openList, setOpenList] = useState(false);
   const [assetOpen, setAssetOpen] = useState(false)
   const [toggle, setToggle] = useState(true)
-  const [trxListData, setTrxListData] = useState(null)
+  const [trxListData, setTrxListData] = useState(null);
+  const [comingSoon, setComingSoonOpen] = useState();
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -95,6 +98,13 @@ export const Dashboard = () => {
 
   const openDepositModal = (asset) => {
     setIsOpen(true);
+  };
+  const closeComingSoonModal = () => {
+    setComingSoonOpen(false);
+  };
+
+  const openComingSoonModal = (asset) => {
+    setComingSoonOpen(true);
   };
 
   const closeDepositModal = () => {
@@ -250,6 +260,13 @@ export const Dashboard = () => {
                 <HiFolderMinus size={27} />
                 </div>
                 <span>Fiat transfer</span>
+              </span>
+
+              <span className="bal-btn" onClick={openComingSoonModal}>
+                <div className="bal-icon-wrap">
+                <CgMoreO size={27} />
+                </div>
+                <span>More...</span>
               </span>
 
             </div>
@@ -410,9 +427,15 @@ export const Dashboard = () => {
       />}
       
       {fiatTransferOpen && <FiatTransferModal isOpen={fiatTransferOpen} onClose={closeFiatTransferModal} />}
+
       {fiatDepositOpen && <Fiatdeposit onClose={closeFiatDepositModal} isOpen={fiatDepositOpen} />}
+
+      {comingSoon && <ComingSoon onClose={closeComingSoonModal} isOpen={comingSoon} />}
+
       {fiatWithdrawalOpen && <FiatWithdrawalModal onClose={closeFiatWithdrawalModal} isOpen={fiatWithdrawalOpen} assets={assets} />}
+
       {trxListOpen && <TransactionList isOpen={trxListOpen} onClose={closeTrxListModal} trxListData={trxListData} />}
+      
       {sendOptionsOpen && 
       <SendOptions 
         isOpen={openSendOptionModal}
