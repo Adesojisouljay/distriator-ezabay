@@ -21,7 +21,7 @@ function RightNav({ rightNav, handleRightNav, handleLogout }) {
     { logo: <IoLogoSlack size={20} />, text: "Create Hive Account", path: "/hive-onboard" },
     { logo: <FaTachometerAlt size={20} />, text: "Spend HBD", path: "/spend-hbd" },
     { logo: <CgProfile size={20} />, text: "Profile", path: "/profile" },
-    { logo: <CgProfile size={20} />, text: "Spinner", path: "/spinner" },
+    // { logo: <CgProfile size={20} />, text: "Spinner", path: "/spinner" },
     // ...(user && user?.role !== "user"
     //   ? [
     //       { logo: <PiHandDeposit size={20} />, text: "Deposit", path: "/fiat-deposit-action" },
