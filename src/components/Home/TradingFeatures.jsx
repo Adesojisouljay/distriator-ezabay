@@ -5,27 +5,27 @@ const TradingFeatures = () => {
     <section className="trading-features">
       <div className="container">
         <div className="scroll-reveal">
-          <h2 className="section-title">Advanced Trading Features</h2>
+          <h2 className="section-title">Powerful Exchange Features</h2>
           <p className="section-subtitle">
-            Professional tools for every type of trader
+          Trade, connect, and convert with tools built for today’s crypto users
           </p>
         </div>
         
         <div className="trading-grid">
           <div className="trading-feature scroll-reveal">
             <TrendingUp className="trading-icon" size={40} />
-            <h3>Real-time Charts</h3>
-            <p>Advanced charting tools with technical indicators for informed trading decisions.</p>
+            <h3>Real-time Prices</h3>
+            <p>Stay on top of market movements with real-time price updates.</p>
           </div>
           <div className="trading-feature scroll-reveal">
             <Shield className="trading-icon" size={40} />
-            <h3>Order Protection</h3>
-            <p>Smart order routing and protection against market manipulation.</p>
+            <h3>Swift Token & Fiat Conversion</h3>
+            <p>Instantly convert crypto to fiat or other tokens, powered by low-latency swaps.</p>
           </div>
           <div className="trading-feature scroll-reveal">
             <Users className="trading-icon" size={40} />
-            <h3>Social Trading</h3>
-            <p>Follow successful traders and copy their strategies automatically.</p>
+            <h3>Discord Community</h3>
+            <p>Chat with us, get support, and connect with other traders in our live Discord server.</p>
           </div>
         </div>
       </div>

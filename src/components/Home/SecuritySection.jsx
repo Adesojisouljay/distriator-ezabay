@@ -6,31 +6,31 @@ const SecuritySection = () => {
       <div className="container">
         <div className="security-content">
           <div className="security-text scroll-reveal">
-            <h2 className="section-title">Bank-Level Security</h2>
+            <h2 className="section-title">Decentralized Security</h2>
             <p className="security-description">
-              Your security is our top priority. We implement multiple layers of protection 
-              to ensure your funds and personal information remain safe at all times.
+              Your safety is built into the protocol. With non-custodial wallets and Hive blockchain technology, 
+              your assets remain in your control — always.
             </p>
             <div className="security-features">
               <div className="security-feature">
                 <Lock size={24} />
                 <div>
-                  <h4>Cold Storage</h4>
-                  <p>95% of funds stored offline in secure cold wallets</p>
+                  <h4>Non-Custodial</h4>
+                  <p>Only you hold the keys. No third party can access your funds.</p>
                 </div>
               </div>
               <div className="security-feature">
                 <Shield size={24} />
                 <div>
-                  <h4>2FA Authentication</h4>
-                  <p>Two-factor authentication for enhanced account security</p>
+                  <h4>On-Chain Security</h4>
+                  <p>Every transaction is recorded transparently and immutably on Hive.</p>
                 </div>
               </div>
               <div className="security-feature">
                 <Award size={24} />
                 <div>
-                  <h4>Insurance Coverage</h4>
-                  <p>FDIC insured up to $250,000 for digital assets</p>
+                  <h4>Community-Governed</h4>
+                  <p>Security protocols evolve with input from Hive’s decentralized community.</p>
                 </div>
               </div>
             </div>
@@ -42,6 +42,7 @@ const SecuritySection = () => {
           </div>
         </div>
       </div>
+
     </section>
   );
 };
