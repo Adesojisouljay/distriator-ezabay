@@ -17,6 +17,9 @@
         border-radius: 15px;
         // padding: 2rem;
         margin-top: 20px;
+        @include respond(phone) {
+          margin-top: 10px;
+        }
       
         &__header {
           font-size: 1.5rem;
@@ -132,6 +135,10 @@
             text-align: center;
             font-size: 25px;
             margin-bottom: 10px;
+            @include respond(phone) {
+          font-size: 18px;
+          margin-bottom: 0px;
+        }
         }
         @include respond(phone) {
           font-size: 18px;
@@ -180,6 +187,7 @@
         border-bottom: 1px solid;
         border-color: rgba(229, 229, 229, 0.1);
         @include respond(phone) {
+          font-size: 12px;
           padding-left: 7px;
           padding-right: 7px;
         }

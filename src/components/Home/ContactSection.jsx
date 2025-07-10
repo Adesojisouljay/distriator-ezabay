@@ -20,7 +20,7 @@ const ContactSection = () => {
           <div className="contact-item scroll-reveal">
             <Phone className="contact-icon" size={40} />
             <h3>Phone Support</h3>
-            <p>+234 81600 5535</p>
+            <p>+234 90232 10315</p>
           </div>
           <div className="contact-item scroll-reveal">
             <MapPin className="contact-icon" size={40} />
