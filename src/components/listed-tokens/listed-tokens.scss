@@ -8,6 +8,7 @@
       font-weight: bold;
       @include respond(phone) {
         font-size: 18px;
+        margin-bottom: 10px;
       }
       
   }
@@ -89,7 +90,7 @@
                   color: #fff;
                   font-size: 18px;
                   @include respond(phone) {
-                    font-size: 16px;
+                    font-size: 14px;
                   }
               }
 
@@ -114,7 +115,7 @@
                   font-size: 18px;
                   font-weight: bold;
                   @include respond(phone) {
-                    font-size: 16px;
+                    font-size: 14px;
                   }
               }
 
@@ -122,6 +123,9 @@
                   font-size: 16px;
                   font-weight: 600;
                   text-transform: uppercase;
+                  @include respond(phone) {
+                    font-size: 12.89px;
+                  }
               }
 
               .token-change {

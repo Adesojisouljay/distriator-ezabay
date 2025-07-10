@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-:root {
+/* :root {
   --primary-bg: rgb(15, 16, 30);
   --gradient-bg: linear-gradient(180deg, #44a08d, #093637 47.6%, #010314 65.23%);
   --accent-crypto: #44a08d;
@@ -14,6 +14,16 @@
   --text-muted: #a0aec0;
   --card-bg: rgba(255, 255, 255, 0.05);
   --border-crypto: rgba(68, 160, 141, 0.3);
+} */
+
+:root {
+  --primary-bg: rgb(10, 20, 40); /* dark navy blue base */
+  --gradient-bg: linear-gradient(180deg, rgb(28, 100, 224), rgb(10, 20, 40) 60%, #010314 90%);
+  --accent-crypto: rgb(28, 100, 224); /* updated to match the new color */
+  --text-light: #ffffff;
+  --text-muted: #a0aec0;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --border-crypto: rgba(28, 100, 224, 0.3); /* subtle border with new accent */
 }
 
 body {
@@ -120,7 +130,7 @@ body {
 
 /* Header */
 .header {
-  background: var(--gradient-bg);
+  /* background: var(--gradient-bg); */
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -148,7 +158,7 @@ body {
   backdrop-filter: blur(10px);
   padding: 15px 0;
   z-index: 1000;
-  border-bottom: 1px solid var(--border-crypto);
+  /* border-bottom: 1px solid var(--border-crypto); */
 }
 
 .navbar .container {
@@ -157,7 +167,7 @@ body {
   align-items: center;
 }
 
-.logo {
+/* .logo {
   font-size: 2rem;
   font-weight: 800;
   color: var(--accent-crypto);
@@ -166,7 +176,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-}
+} */
 
 .nav-links {
   display: flex;
@@ -498,8 +508,8 @@ body {
 .stats-section {
   background: rgba(15, 16, 30, 0.95);
   padding: 60px 0;
-  border-top: 1px solid var(--border-crypto);
-  border-bottom: 1px solid var(--border-crypto);
+  /* border-top: 1px solid var(--border-crypto);
+  border-bottom: 1px solid var(--border-crypto); */
 }
 
 .stats-grid {

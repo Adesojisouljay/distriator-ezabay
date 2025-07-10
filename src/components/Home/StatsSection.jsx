@@ -4,11 +4,11 @@ const StatsSection = () => {
       <div className="container">
         <div className="stats-grid">
           <div className="stat-item scroll-reveal">
-            <div className="stat-number">200+</div>
+            <div className="stat-number">230+</div>
             <div className="stat-label">Active Users</div>
           </div>
           <div className="stat-item scroll-reveal">
-            <div className="stat-number">5k+</div>
+            <div className="stat-number">7k+</div>
             <div className="stat-label">Transaction</div>
           </div>
           <div className="stat-item scroll-reveal">

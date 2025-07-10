@@ -24,7 +24,7 @@ const TestimonialsSection = () => {
             <div className="testimonial-author">
               <div className="author-avatar">JD</div>
               <div>
-                <div className="author-name">John Doe</div>
+                <div className="author-name">Olowu Kayode</div>
                 <div className="author-title">Crypto Trader</div>
               </div>
             </div>
@@ -42,8 +42,8 @@ const TestimonialsSection = () => {
             <div className="testimonial-author">
               <div className="author-avatar">SM</div>
               <div>
-                <div className="author-name">Sarah Miller</div>
-                <div className="author-title">Investment Advisor</div>
+                <div className="author-name">Tochi Eze</div>
+                <div className="author-title">Crypto Trader</div>
               </div>
             </div>
           </div>
@@ -60,8 +60,8 @@ const TestimonialsSection = () => {
             <div className="testimonial-author">
               <div className="author-avatar">MJ</div>
               <div>
-                <div className="author-name">Mike Johnson</div>
-                <div className="author-title">Small Business Owner</div>
+                <div className="author-name">Mark Akin</div>
+                <div className="author-title">Crypto Trader</div>
               </div>
             </div>
           </div>
