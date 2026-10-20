@@ -393,6 +393,7 @@ export const fetchCryptoData = async () => {
 
 export const addAsset = async (coinId) => {
   try {
+    const token = localStorage.getItem('token') || authToken;
     const response = await api.post(
       '/auth/add-asset',
       {
@@ -400,7 +401,7 @@ export const addAsset = async (coinId) => {
       },
       {
         headers: {
-          Authorization: authToken,
+          Authorization: token,
         },
       }
     );
@@ -415,6 +416,7 @@ export const addAsset = async (coinId) => {
 /////not needed
 export const removeAsset = async (coinId) => {
   try {
+    const token = localStorage.getItem('token') || authToken;
     const response = await api.post(
       '/auth/remove-asset',
       {
@@ -422,7 +424,7 @@ export const removeAsset = async (coinId) => {
       },
       {
         headers: {
-          Authorization: authToken,
+          Authorization: token,
         },
       }
     );

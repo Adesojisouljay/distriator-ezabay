@@ -1,58 +1,51 @@
-import { ArrowLeftRight, ShieldCheck, Coins, TrendingUp } from 'lucide-react';
+import React from 'react';
+import { ShieldCheck, Zap, RefreshCw, BarChart3, Coins, Wallet, TrendingUp, ArrowLeftRight } from 'lucide-react';
 
 const FeaturesSection = () => {
+  const features = [
+    {
+      icon: <ArrowLeftRight className="feature-icon-svg" />,
+      title: "Buy HIVE & HBD",
+      description: "Quick and secure way to acquire HIVE and HBD with multiple payment options."
+    },
+    {
+      icon: <ShieldCheck className="feature-icon-svg" />,
+      title: "Secure Transactions",
+      description: "Our platform prioritizes security, ensuring your HIVE and HBD transactions are safe and protected."
+    },
+    {
+      icon: <Coins className="feature-icon-svg" />,
+      title: "Low Fees",
+      description: "Enjoy trading HIVE and HBD with minimal fees. Our platform ensures transparent pricing."
+    },
+    {
+      icon: <TrendingUp className="feature-icon-svg" />,
+      title: "Spend & Earn",
+      description: "Use HIVE and HBD on platforms like SpendHBD and Distraitor for payments and rewards."
+    }
+  ];
+
   return (
-    <section id="features" className="features">
+    <section id="features" className="section features">
       <div className="container">
-        <div className="scroll-reveal">
-          <h2 className="section-title">
-            Buy HIVE & HBD with Ease
-          </h2>
-          <p className="section-subtitle">
-            The Gateway to Seamless Spending & Rewards
-          </p>
+        <div className="section-header scroll-reveal">
+          <h2 className="section-title">Why Choose Ezabay?</h2>
+          <p className="section-subtitle">The Gateway to Seamless Spending & Rewards</p>
         </div>
-        
         <div className="features-grid">
-          <div className="feature-card scroll-reveal">
-            <div className="feature-icon">
-              <ArrowLeftRight size={32} />
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="feature-card glass glass-hover scroll-reveal"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="feature-icon-wrapper">
+                {feature.icon}
+              </div>
+              <h3 className="feature-title">{feature.title}</h3>
+              <p className="feature-description">{feature.description}</p>
             </div>
-            <h3 className="feature-title">Quick & Easy HIVE Purchases</h3>
-            <p className="feature-description">
-              Purchase HIVE and HBD instantly with minimal hassle, ready for use on SpendHBD and Distraitor.
-            </p>
-          </div>
-
-          <div className="feature-card scroll-reveal">
-            <div className="feature-icon">
-              <ShieldCheck size={32} />
-            </div>
-            <h3 className="feature-title">Secure Transactions</h3>
-            <p className="feature-description">
-              Our platform prioritizes security, ensuring your HIVE and HBD transactions are safe and protected.
-            </p>
-          </div>
-
-          <div className="feature-card scroll-reveal">
-            <div className="feature-icon">
-              <Coins size={32} />
-            </div>
-            <h3 className="feature-title">Low Fees on Transactions</h3>
-            <p className="feature-description">
-              Enjoy trading HIVE and HBD with minimal fees. Our platform ensures transparent pricing without hidden charges.
-            </p>
-          </div>
-
-          <div className="feature-card scroll-reveal">
-            <div className="feature-icon">
-              <TrendingUp size={32} />
-            </div>
-            <h3 className="feature-title">Spend & Earn with HIVE & HBD</h3>
-            <p className="feature-description">
-              Use HIVE and HBD on platforms like SpendHBD and Distraitor for payments and rewards.
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </section>

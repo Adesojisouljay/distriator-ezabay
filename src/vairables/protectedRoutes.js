@@ -4,6 +4,8 @@ import Mexico from "../assets/mexico.png"
 
 export  const protectedRoutesArray = [
     '/dashboard',
+    '/wallet',
+    '/transactions',
     '/controller',
     '/test',
     '/spinner',

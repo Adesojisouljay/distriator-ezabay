@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { requestToken, internalTransfer } from '../../api/ekzat';
 import { RiArrowDownSFill } from 'react-icons/ri';
+import { IoClose } from 'react-icons/io5';
 import { Dropdown } from '../dropdown/Dropdown';
 import './withdraw-modal.scss';
 import Spinner from '../spinner/Spinner';
@@ -120,11 +121,11 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
       };
       
   return (
-    <div className={`fadded-container modal-overlay ${isOpen ? 'open' : ''}`} >
-    <div className={`modal-overlay  ${isOpen ? 'open' : ''}`}  onClick={onClose}> </div>
-    {/* <div className={`modal-overlay ${isOpen ? 'open' : ''}`}> */}
-      <div className="modal testing">
-        <span className="close-modal" onClick={onClose}>X</span>
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
+      <div className="modal testing" onClick={(e) => e.stopPropagation()}>
+        <button className="close-modal" onClick={onClose} title="Close">
+          <IoClose size={18} />
+        </button>
         <h2 className='w-header'>Internal Transfer</h2>
         {loading && <Loader />}
         {message && <p className='warning'>{message}</p>}
@@ -132,21 +133,21 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
 
           <div className='w-main'>
             <div className='d-coin-select-wrapper'>
-            <span>{selectedAsset?.currency}</span>
-            <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
-              <img className="d-coin-wrap" src={selectedAsset?.image} alt="" />
-              <span className='d-picker-currency'>{selectedAsset?.currency}</span>
-              <RiArrowDownSFill  size={24}/>
-              
+              <span className="label-tag">Select Asset</span>
+              <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
+                {selectedAsset?.image && <img className="d-coin-wrap" src={selectedAsset?.image} alt="" />}
+                <span className='d-picker-currency'>{selectedAsset?.symbol || selectedAsset?.currency}</span>
+                <RiArrowDownSFill size={20}/>
+              </div>
               <Dropdown 
                 user={user}
                 setCurrency={setSelectedAsset}
                 handleOpencoinList={handleOpencoinList} 
                 openList={openList}
-                displaySearch={displaySearch} 
+                displaySearch={displaySearch}
+                selectedCurrency={selectedAsset}
               />
             </div>
-          </div>
           </div>
 
          <>
@@ -177,14 +178,17 @@ export const InternalTransferModal = ({ isOpen, onClose, assets, user }) => {
               className='w-input'
               type="number"
               id="withdraw-amount"
+              min="0"
+              step="any"
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
               value={amount}
               onChange={(e) => {
-                setDisableBtn(false)
-                setAmount(e.target.value)
-                if(!e.target.value) {
-                  setDisableBtn(true)
-                  return
-                }
+                let val = e.target.value.replace(/[^0-9.]/g, '');
+                if ((val.match(/\./g) || []).length > 1) val = val.slice(0, -1);
+                setDisableBtn(!val);
+                setAmount(val);
               }}              
               placeholder="Enter amount"
             />

@@ -1,286 +1,710 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Loader } from "../loader/Loader";
-import { useSelector } from "react-redux";
-import { MdOutlineDownload } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import { getAccount } from "../../hive-client";
 import { createHiveAccount, getAccountKeys } from '../../api/hive';
+import { getUserProfile } from '../../api/profile';
 import { validateHiveUsername } from "../../utils";
+import hiveLogo from "../../assets/hive-logo.png";
 import success from "../../assets/succes.gif";
+import { 
+  FaCheck, 
+  FaTimes, 
+  FaCopy, 
+  FaShieldAlt, 
+  FaExternalLinkAlt 
+} from "react-icons/fa";
+import { 
+  HiOutlineEnvelope, 
+  HiExclamationTriangle, 
+  HiOutlineSparkles
+} from "react-icons/hi2";
+import { MdOutlineDownload } from "react-icons/md";
+import { IoArrowBack, IoCheckmarkCircle } from "react-icons/io5";
 import "./index.scss";
 
 export const HiveOnboard = () => {
-
-    const user = useSelector((state) => state.ekzaUser.user);
-    const hiveAsset = user?.assets[0]
-    const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [step, setStep] = useState(1);
-    const [newHiveAccount, setNewHiveAccount] = useState(null);
-    const [message, setMessage] = useState(null);
-    const [usernameAvailable, setUsernameAvailable] = useState(null);
-    const [usernameValid, setUsernameValid] = useState(null);
-    const [isDownloaded, setIsDownloaded] = useState(false);
-    const [feeType, setFeeType] = useState('hive');
-
-      const debounceTimer = useRef(null);
-
-  useEffect(() => {
-    if (username) {
-      getExistingHiveAccount();
-    }
-  }, [username]);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.ekzaUser?.user);
+  const hiveAsset = user?.assets?.find(
+    (a) => (a.currency || a.symbol)?.toLowerCase() === "hive"
+  ) || user?.assets?.[0];
 
   const fee = 1;
+  const hivePriceInNaira = hiveAsset?.nairaValue || 407.92;
+  const feeInNaira = (hivePriceInNaira * fee).toFixed(2);
+  const userNairaBalance = Number(user?.nairaBalance || 0);
+  const userHiveBalance = Number(hiveAsset?.balance || 0);
 
-  const getExistingHiveAccount = async () => {
-    setLoading(true);
-    validateUsernameWithDelay(username);
+  const [loading, setLoading] = useState(false);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(user?.email || "");
+  const [step, setStep] = useState(1);
+  const [newHiveAccount, setNewHiveAccount] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameValid, setUsernameValid] = useState(null);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const [feeType, setFeeType] = useState('hive');
+  const [copiedKey, setCopiedKey] = useState({});
+  const [confirmedBackup, setConfirmedBackup] = useState(false);
+
+  const debounceTimer = useRef(null);
+
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (username.trim()) {
+      clearTimeout(debounceTimer.current);
+      setCheckingUsername(true);
+      setMessage(null);
+      debounceTimer.current = setTimeout(() => {
+        checkHiveAccountAvailability(username.trim().toLowerCase());
+      }, 450);
+    } else {
+      setMessage(null);
+      setUsernameAvailable(null);
+      setUsernameValid(null);
+      setCheckingUsername(false);
+    }
+    return () => clearTimeout(debounceTimer.current);
+  }, [username]);
+
+  const checkHiveAccountAvailability = async (cleanedUsername) => {
+    let validationErr = "";
+    const isValid = validateHiveUsername(cleanedUsername, (msg) => {
+      validationErr = msg;
+    });
+
+    if (!isValid) {
+      setUsernameValid(false);
+      setUsernameAvailable(false);
+      setMessage(validationErr || "Invalid username format");
+      setCheckingUsername(false);
+      return;
+    }
+
+    setUsernameValid(true);
+
     try {
-      const account = await getAccount(username);
+      const account = await getAccount(cleanedUsername);
       if (account) {
-        setMessage("Username is already taken");
+        setMessage("Username is already taken on Hive");
         setUsernameAvailable(false);
       } else {
-        setMessage("Username Available ✅");
+        setMessage("Username is available!");
         setUsernameAvailable(true);
       }
-      setLoading(false);
     } catch (error) {
-      console.log(error);
-      setLoading(false);
+      console.error("Hive lookup error:", error);
+      setMessage("Could not verify username availability");
+      setUsernameAvailable(false);
+    } finally {
+      setCheckingUsername(false);
     }
-  };
-
-  const validateUsernameWithDelay = (newUsername) => {
-    clearTimeout(debounceTimer.current);
-
-    debounceTimer.current = setTimeout(() => {
-      const isValid = validateHiveUsername(newUsername, setMessage);
-      if (isValid) {
-        setUsernameValid(true)
-      } else {
-        setUsernameValid(false)
-      }
-    }, 500);
   };
 
   const usernameChanged = (e) => {
-    const newUsername = e.target.value;
-    setUsername(newUsername.toLowerCase());
+    const rawVal = e.target.value.toLowerCase().replace(/[^a-z0-9.-]/g, "");
+    setUsername(rawVal);
   };
 
- const getkeys = async (e) => {
-        e.preventDefault();
-        setLoading(true)
-        try {
-            const response = await getAccountKeys(username)
-            if(response.success){
-                setNewHiveAccount(response.accountDetails);
-                setLoading(false)
-                setStep(2)
-            }
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
+  const getKeysStep = async (e) => {
+    e.preventDefault();
+    if (!usernameAvailable || !usernameValid) {
+      toast.error("Please choose a valid and available username");
+      return;
+    }
+    if (!email) {
+      toast.error("Please enter a valid email address");
+      return;
     }
 
-      const handleDownload = () => {
-        const accountData = `
+    setLoading(true);
+    try {
+      const response = await getAccountKeys(username);
+      if (response.success) {
+        setNewHiveAccount(response.accountDetails);
+        setStep(2);
+        toast.info("Keys generated! Please safely back up your keys before proceeding.");
+      } else {
+        toast.error(response.message || "Failed to generate account keys");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Error generating keys. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-         Please handle your password & private keys with extra caution. Your account will no longer be accessible if you loose your password. We do not keep copy of it, it is confidential only you have access to it.
-        We recommend that;
-        1. PRINT this file out and store it securely.
-        2. NEVER use your password/owner key on untrusted apps.
-        3. Save all your keys within a password manager, as you will need them frequently.
-        4. Don't keep this file within the reach of a third party.
-    
-            Your Hive Account Information
+  const copyIndividualKey = (label, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedKey((prev) => ({ ...prev, [label]: true }));
+    toast.success(`${label} copied to clipboard!`);
+    setTimeout(() => {
+      setCopiedKey((prev) => ({ ...prev, [label]: false }));
+    }, 2000);
+  };
 
-          Username: ${newHiveAccount?.username}
+  const handleDownload = () => {
+    const accountData = `=====================================================
+HIVE BLOCKCHAIN ACCOUNT DETAILS - KEEP STRICTLY CONFIDENTIAL
+=====================================================
 
-          Master Password: ${newHiveAccount?.masterPassword}
+Account Username: @${newHiveAccount?.username}
+Creation Date: ${new Date().toUTCString()}
 
-          Active Private Key: ${newHiveAccount?.active}
+-----------------------------------------------------
+1. MASTER PASSWORD (ROOT ACCESS - KEEP STRICTLY OFFLINE)
+-----------------------------------------------------
+Password: ${newHiveAccount?.masterPassword}
 
-          Active Posting Key: ${newHiveAccount?.posting}
+Usage: Used to derive and reset all other private keys. 
+Never enter this on untrusted apps or websites!
 
-          Active Owner Key: ${newHiveAccount?.owner}
+-----------------------------------------------------
+2. PRIVATE KEYS (FOR DAILY USE & HIVE KEYCHAIN)
+-----------------------------------------------------
 
-          Active Memo Key: ${newHiveAccount?.memo}
+[POSTING PRIVATE KEY]
+Key: ${newHiveAccount?.posting}
+Permissions: Social interactions, publishing posts, voting, reblogging, commenting.
+Tip: This is the safest key to import into Hive Keychain for 1-click passwordless login.
 
+[ACTIVE PRIVATE KEY]
+Key: ${newHiveAccount?.active}
+Permissions: Transfers, token transfers, exchange orders, power up / power down.
+Tip: Keep this key secure and use only when authorizing transactions.
 
-                        WHAT YOUR KEYS ARE USED FOR
+[OWNER PRIVATE KEY]
+Key: ${newHiveAccount?.owner}
+Permissions: Changing account passwords, rotating keys, master account recovery.
+Tip: Keep stored in cold storage (printed paper or secure hardware vault).
 
-            Owner key: "Change Password, Change Keys, Recover Account",
+[MEMO PRIVATE KEY]
+Key: ${newHiveAccount?.memo}
+Permissions: Encrypting and decrypting private transfer memos.
 
-            Active key: "Transfer Funds, Power up/down, Voting Witnesses/Proposals",
+=====================================================
+RECOMMENDED NEXT STEPS:
+1. Install Hive Keychain (https://hive-keychain.com) on your browser or mobile phone.
+2. Import @${newHiveAccount?.username} using your Posting & Active keys.
+3. Print this file or store it in an encrypted password manager (1Password, Bitwarden, KeePass).
+4. Do NOT lose these keys. Hive accounts cannot be recovered if keys are lost.
+=====================================================`;
 
-            Posting key: "Post, Comment, Vote, Reblog, Follow, Profile updates",
+    const blob = new Blob([accountData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${newHiveAccount?.username}_Hive_Account_Keys.txt`;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    setIsDownloaded(true);
+    setConfirmedBackup(true);
+    toast.success("Account keys downloaded successfully!");
+  };
 
-            Memo key: "Send/View encrypted messages on transfers",
-        `;
-      
-        const blob = new Blob([accountData], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${newHiveAccount?.username}_HiveAccountDetails.txt`;
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a); 
-        setIsDownloaded(true);
+  const createAccount = async (e) => {
+    if (e) e.preventDefault();
+    if (!isDownloaded && !confirmedBackup) {
+      toast.warn("Please download your keys before creating your account!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const hiveAccountData = {
+        username,
+        email,
+        fee: feeType === "hive" ? fee : (hivePriceInNaira * fee).toFixed(3),
+        feeType,
+        accountKeys: newHiveAccount,
       };
-      
-      const createAccount = async (e) => {
-        e.preventDefault();
-        setLoading(true)
-        try {
 
-            const hiveAccountData = {
-                username,
-                email,
-                fee: feeType === "hive" ? fee : (hiveAsset.nairaValue * fee).toFixed(3),
-                feeType,
-                accountKeys: newHiveAccount
-            }
-
-            const response = await createHiveAccount(hiveAccountData)
-            if(response.success) {
-                setNewHiveAccount(response.accountDetails)
-                setLoading(false)
-                setStep(3)
-            }
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
+      const response = await createHiveAccount(hiveAccountData);
+      if (response.success) {
+        setNewHiveAccount(response.accountDetails);
+        setStep(3);
+        toast.success("Account created successfully on the Hive blockchain!");
+        getUserProfile(dispatch);
+      } else {
+        toast.error(response.message || "Failed to create Hive account");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Error creating account. Please check your balance.");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const hasSufficientBalance =
+    feeType === "hive"
+      ? userHiveBalance >= fee
+      : userNairaBalance >= Number(feeInNaira);
 
   return (
-    <div className="hive-onboard-container">
-      <div className={`hive-onboard-wrapper ${step === 3? "add-width" : ""}`}>
+    <div className="hive-onboard-page-container">
+      {/* Breadcrumb Navigation */}
+      <div className="hive-onboard-breadcrumb">
+        <Link to="/dashboard" className="back-link">
+          <IoArrowBack size={16} />
+          <span>Back to Dashboard</span>
+        </Link>
+        <span className="separator">/</span>
+        <span className="current">Create Hive Account</span>
+      </div>
+
+      <div className={`hive-onboard-card step-${step}`}>
+        {/* Card Header */}
+        <div className="hive-onboard-header">
+          <div className="hive-logo-badge">
+            <img src={hiveLogo} alt="Hive" className="hive-logo-img" />
+          </div>
+          <div className="header-text-group">
+            <h2>Create Hive Account</h2>
+            <p>
+              Get your permanent, decentralized Web3 identity on the Hive
+              blockchain.
+            </p>
+          </div>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="onboard-step-tracker">
+          <div className={`step-node ${step >= 1 ? "active" : ""} ${step > 1 ? "completed" : ""}`}>
+            <div className="step-circle">{step > 1 ? <FaCheck size={11} /> : "1"}</div>
+            <span className="step-label">Account Info</span>
+          </div>
+          <div className={`step-line ${step >= 2 ? "active" : ""}`} />
+          <div className={`step-node ${step >= 2 ? "active" : ""} ${step > 2 ? "completed" : ""}`}>
+            <div className="step-circle">{step > 2 ? <FaCheck size={11} /> : "2"}</div>
+            <span className="step-label">Backup Keys</span>
+          </div>
+          <div className={`step-line ${step >= 3 ? "active" : ""}`} />
+          <div className={`step-node ${step === 3 ? "active completed" : ""}`}>
+            <div className="step-circle">3</div>
+            <span className="step-label">Ready</span>
+          </div>
+        </div>
+
+        {/* ========================================================= */}
+        {/* STEP 1: FORM */}
+        {/* ========================================================= */}
         {step === 1 && (
-          <>
-            <h1>Create Hive Account</h1>
-            <span className={(!usernameAvailable || !usernameValid) ? "warning" : "success"}>
-              {message}
-            </span>
-            <form onSubmit={getkeys}>
-              {loading && <Loader />}
-              <span>Fee: {fee} Hive(₦{(hiveAsset.nairaValue * fee).toFixed(3)})</span>
-              <div className="onboard-form-group">
+          <form className="onboard-form" onSubmit={getKeysStep}>
+            {/* Account Fee Callout */}
+            <div className="account-fee-callout">
+              <div className="fee-icon-wrap">
+                <HiOutlineSparkles size={18} />
+              </div>
+              <div className="fee-info-text">
+                <span className="fee-title">Account Creation Fee:</span>
+                <span className="fee-cost">
+                  <strong>1.000 HIVE</strong> <span className="fee-sub">(≈ ₦{feeInNaira})</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Username Input Group */}
+            <div className="form-group-wrap">
+              <label className="field-label" htmlFor="username">
+                Hive Username
+              </label>
+              <div className={`input-card ${username ? (usernameAvailable ? "valid" : "invalid") : ""}`}>
+                <span className="input-prefix">@</span>
                 <input
-                  type={"text"}
+                  id="username"
+                  type="text"
                   value={username}
                   onChange={usernameChanged}
-                  placeholder="Pick a username"
+                  placeholder="e.g. Satoshi"
+                  maxLength={16}
+                  autoComplete="off"
                   required
                 />
+                <div className="input-feedback-wrap">
+                  {checkingUsername && (
+                    <span className="feedback-pill checking">
+                      <span className="mini-spinner" /> Checking...
+                    </span>
+                  )}
+                  {!checkingUsername && username && usernameAvailable === true && (
+                    <span className="feedback-pill valid">
+                      <FaCheck size={11} /> Available
+                    </span>
+                  )}
+                  {!checkingUsername && username && usernameAvailable === false && (
+                    <span className="feedback-pill invalid">
+                      <FaTimes size={11} /> Taken
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="onboard-form-group">
+              <span className={`helper-note ${username && !usernameValid ? "error-text" : ""}`}>
+                {message || "Must be 3-16 characters: lowercase letters, numbers, or single hyphens/dots."}
+              </span>
+            </div>
+
+            {/* Email Input Group */}
+            <div className="form-group-wrap">
+              <label className="field-label" htmlFor="email">
+                Notification Email
+              </label>
+              <div className="input-card">
+                <HiOutlineEnvelope className="input-icon" size={18} />
                 <input
-                  type={"email"}
+                  id="email"
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder="your.email@example.com"
                   required
                 />
               </div>
+              <span className="helper-note">
+                Your keyfile backup receipt and setup instructions will be sent here.
+              </span>
+            </div>
 
-              <div className="fee-type-selection">
-                    <label className='fee-type-label'>
-                        <input
-                            className='fee-type-input'
-                            type="radio"
-                            value="hive"
-                            checked={feeType === 'hive'}
-                            onChange={() => setFeeType('hive')}
-                        />
-                        Pay with Hive
-                    </label>
-                    <label className='fee-type-label'>
-                        <input
-                            className='fee-type-input'
-                            type="radio"
-                            value="NGN"
-                            checked={feeType === 'NGN'}
-                            onChange={() => setFeeType('NGN')}
-                        />
-                        Pay with Naira
-                    </label>
+            {/* Payment Method Cards */}
+            <div className="form-group-wrap">
+              <label className="field-label">Payment Source</label>
+              <div className="payment-options-grid">
+                {/* Option 1: HIVE */}
+                <div
+                  className={`payment-option-card ${feeType === "hive" ? "selected" : ""}`}
+                  onClick={() => setFeeType("hive")}
+                >
+                  <div className="option-header">
+                    <img src={hiveLogo} alt="Hive" className="currency-icon" />
+                    <span className="option-title">Pay with HIVE</span>
+                    <div className="selection-radio">
+                      {feeType === "hive" && <div className="radio-inner" />}
+                    </div>
+                  </div>
+                  <div className="option-body">
+                    <span className="option-price">1.000 HIVE</span>
+                    <span className="option-bal">
+                      Wallet: {userHiveBalance.toFixed(3)} HIVE
+                    </span>
+                  </div>
                 </div>
-              <button
-                style={{
-                  cursor: (loading || !usernameAvailable || !usernameValid) && "not-allowed",
-                }}
-                className="onboard-btn"
-                disabled={loading || !usernameAvailable || !usernameValid}
-                type="submit"
-              >
-                Proceed
-              </button>
-            </form>
-          </>
-        )}
-        {step === 2 && (
-          <div className={`hive-onboard-created-wrapper ${step === 3? "add-width" : ""}`}>
-            <h1 className="onboard-title">Create Hive Account</h1>
-            <div className="hive-account-details">
-              <p>Username: {newHiveAccount?.username}</p>
-              <p>Master Password: {newHiveAccount?.masterPassword}</p>
-              <p>Active Private Key: {newHiveAccount?.active}</p>
-              <p>Active Posting Key: {newHiveAccount?.posting}</p>
-              <p>Active Owner Key: {newHiveAccount?.owner}</p>
-              <p>Active Memo Key: {newHiveAccount?.memo}</p>
-            </div>
-            <div className="note-wrap note-bgs">
-              <header>Please Note:</header>
-              <ul className="blink-in">
-                <li>
-                  Please copy and download you keys 
-                </li>
-                <li>We don't recover keys for user because we don't save it</li>
-                <li>You'll need to be more careful with your Active Key since it has permissions to perform wallet related actions.</li>
-              </ul>
+
+                {/* Option 2: Naira */}
+                <div
+                  className={`payment-option-card ${feeType === "NGN" ? "selected" : ""}`}
+                  onClick={() => setFeeType("NGN")}
+                >
+                  <div className="option-header">
+                    <div className="currency-icon naira-pill">₦</div>
+                    <span className="option-title">Pay with Naira</span>
+                    <div className="selection-radio">
+                      {feeType === "NGN" && <div className="radio-inner" />}
+                    </div>
+                  </div>
+                  <div className="option-body">
+                    <span className="option-price">₦{feeInNaira}</span>
+                    <span className="option-bal">
+                      Cash: ₦{userNairaBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {!hasSufficientBalance && (
+                <div className="balance-warning-banner">
+                  <HiExclamationTriangle size={16} />
+                  <span>
+                    Insufficient {feeType === "hive" ? "HIVE" : "Naira"} balance.{" "}
+                    <Link to="/wallet" className="deposit-link">
+                      Deposit funds
+                    </Link>{" "}
+                    to continue.
+                  </span>
+                </div>
+              )}
             </div>
 
-            <button onClick={handleDownload} className="onboard-btn-download">
-              Download Keys <MdOutlineDownload size={24} />
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn-onboard-action"
+              disabled={
+                loading ||
+                checkingUsername ||
+                !usernameAvailable ||
+                !usernameValid ||
+                !hasSufficientBalance
+              }
+            >
+              {loading ? (
+                <>
+                  <span className="btn-spinner" />
+                  <span>Generating Account Keys...</span>
+                </>
+              ) : (
+                <span>Generate Keys & Continue →</span>
+              )}
+            </button>
+          </form>
+        )}
+
+        {/* ========================================================= */}
+        {/* STEP 2: KEY BACKUP */}
+        {/* ========================================================= */}
+        {step === 2 && (
+          <div className="onboard-step-2-content">
+            {/* Security Alert Banner */}
+            <div className="security-alert-box">
+              <HiExclamationTriangle size={22} className="alert-icon" />
+              <div className="alert-text">
+                <h4>Non-Custodial Warning</h4>
+                <p>
+                  Hive is a decentralized blockchain. Ezabay does <strong>not</strong> save
+                  or store your private keys. If you lose them, your account can
+                  never be recovered. Save them in a secure password manager!
+                </p>
+              </div>
+            </div>
+
+            {/* Generated Keys Display */}
+            <div className="keys-scroll-list">
+              {/* Master Password */}
+              <div className="key-item-card master-card">
+                <div className="key-header">
+                  <div className="key-title-wrap">
+                    <span className="key-name">Master Password</span>
+                    <span className="permission-badge danger">Root Access</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-copy-key"
+                    onClick={() => copyIndividualKey("Master Password", newHiveAccount?.masterPassword)}
+                  >
+                    {copiedKey["Master Password"] ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedKey["Master Password"] ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="key-value-wrap">
+                  <code>{newHiveAccount?.masterPassword}</code>
+                </div>
+                <span className="key-desc">
+                  Used only to reset or derive all other keys. Store offline!
+                </span>
+              </div>
+
+              {/* Active Key */}
+              <div className="key-item-card">
+                <div className="key-header">
+                  <div className="key-title-wrap">
+                    <span className="key-name">Active Private Key</span>
+                    <span className="permission-badge warning">Wallet / Transfers</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-copy-key"
+                    onClick={() => copyIndividualKey("Active Key", newHiveAccount?.active)}
+                  >
+                    {copiedKey["Active Key"] ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedKey["Active Key"] ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="key-value-wrap">
+                  <code>{newHiveAccount?.active}</code>
+                </div>
+                <span className="key-desc">
+                  Required for transfers, staking, power up/down, and trade orders.
+                </span>
+              </div>
+
+              {/* Posting Key */}
+              <div className="key-item-card">
+                <div className="key-header">
+                  <div className="key-title-wrap">
+                    <span className="key-name">Posting Private Key</span>
+                    <span className="permission-badge success">Social & Keychain</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-copy-key"
+                    onClick={() => copyIndividualKey("Posting Key", newHiveAccount?.posting)}
+                  >
+                    {copiedKey["Posting Key"] ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedKey["Posting Key"] ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="key-value-wrap">
+                  <code>{newHiveAccount?.posting}</code>
+                </div>
+                <span className="key-desc">
+                  Safe for Hive Keychain logins, publishing posts, voting, and reblogging.
+                </span>
+              </div>
+
+              {/* Owner Key */}
+              <div className="key-item-card">
+                <div className="key-header">
+                  <div className="key-title-wrap">
+                    <span className="key-name">Owner Private Key</span>
+                    <span className="permission-badge danger">Account Recovery</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-copy-key"
+                    onClick={() => copyIndividualKey("Owner Key", newHiveAccount?.owner)}
+                  >
+                    {copiedKey["Owner Key"] ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedKey["Owner Key"] ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="key-value-wrap">
+                  <code>{newHiveAccount?.owner}</code>
+                </div>
+                <span className="key-desc">
+                  Account recovery key. Keep stored securely offline.
+                </span>
+              </div>
+
+              {/* Memo Key */}
+              <div className="key-item-card">
+                <div className="key-header">
+                  <div className="key-title-wrap">
+                    <span className="key-name">Memo Private Key</span>
+                    <span className="permission-badge neutral">Encryption</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-copy-key"
+                    onClick={() => copyIndividualKey("Memo Key", newHiveAccount?.memo)}
+                  >
+                    {copiedKey["Memo Key"] ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedKey["Memo Key"] ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="key-value-wrap">
+                  <code>{newHiveAccount?.memo}</code>
+                </div>
+                <span className="key-desc">
+                  Used to decrypt private encrypted transfer memos on Hive.
+                </span>
+              </div>
+            </div>
+
+            {/* Download Keyfile Action */}
+            <button
+              type="button"
+              className={`btn-download-keyfile ${isDownloaded ? "downloaded" : ""}`}
+              onClick={handleDownload}
+            >
+              <MdOutlineDownload size={22} />
+              <span>
+                {isDownloaded ? "Download Keyfile Again (.txt)" : "Download Keyfile Backup (.txt)"}
+              </span>
+              {isDownloaded && <IoCheckmarkCircle size={20} className="check-done" />}
             </button>
 
-            <button onClick={createAccount}
-            style={{cursor: isDownloaded ? "" : "not-allowed"}}
-              className={`onboard-btn ${!isDownloaded ? "downloaded" : ""}`}
-              disabled={!isDownloaded}
+            {/* Checkbox Acknowledgment */}
+            <label className="checkbox-confirmation-wrap">
+              <input
+                type="checkbox"
+                checked={confirmedBackup}
+                onChange={(e) => setConfirmedBackup(e.target.checked)}
+              />
+              <span>
+                I have securely downloaded and backed up my Master Password and Private Keys.
+              </span>
+            </label>
+
+            {/* Final Creation Button */}
+            <button
+              type="button"
+              className="btn-onboard-action final"
+              disabled={loading || (!isDownloaded && !confirmedBackup)}
+              onClick={createAccount}
             >
-              <div className="wrap">
-                {loading ? (<>
-              <div class="lds-spinner">
-                <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                <span>Creating.....</span>
-                </>) : (<span>Create Account</span>)
-              
-                    }
-              </div>
-              
+              {loading ? (
+                <>
+                  <span className="btn-spinner" />
+                  <span>Registering @{username} on Hive...</span>
+                </>
+              ) : (
+                <span>Complete Account Creation ({feeType === "hive" ? "1 HIVE" : `₦${feeInNaira}`})</span>
+              )}
             </button>
           </div>
         )}
 
+        {/* ========================================================= */}
+        {/* STEP 3: SUCCESS */}
+        {/* ========================================================= */}
         {step === 3 && (
-          <div className={`hive-onboard-created-wrapper `}>
-            <img src={success} alt="" />
-            <h2>Congratulations</h2>
-            <p  className="sucess-text">
-                Your hive account has been created successfully, please check your
-                email for your keys
+          <div className="onboard-step-3-content">
+            <div className="celebration-badge">
+              <img src={success} alt="Success" className="success-gif" />
+            </div>
+
+            <div className="success-text-block">
+              <h3>Welcome to Hive!</h3>
+              <p className="account-tag">@{username}</p>
+              <p className="success-desc">
+                Your Hive account is now live on the blockchain. You can now publish,
+                earn crypto rewards, vote, and trade across the entire Hive Web3 ecosystem!
               </p>
+            </div>
+
+            {/* Keychain Integration Tip */}
+            <div className="keychain-tip-card">
+              <div className="tip-header">
+                <FaShieldAlt size={18} className="tip-icon" />
+                <h4>Next: Install Hive Keychain</h4>
+              </div>
+              <p>
+                Import your <strong>@{username}</strong> Posting and Active keys into the
+                Hive Keychain browser extension or mobile app for seamless 1-click
+                logins and transactions across Ezabay and all Hive dApps.
+              </p>
+              <a
+                href="https://hive-keychain.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="keychain-link"
+              >
+                <span>Get Hive Keychain</span>
+                <FaExternalLinkAlt size={11} />
+              </a>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="success-action-buttons">
+              <button
+                type="button"
+                className="btn-download-again"
+                onClick={handleDownload}
+              >
+                <MdOutlineDownload size={18} />
+                <span>Download Keys Again</span>
+              </button>
+              <Link to="/dashboard" className="btn-go-dashboard">
+                <span>Go to Dashboard</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
 };
+
+export default HiveOnboard;

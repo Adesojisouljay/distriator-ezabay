@@ -139,7 +139,10 @@ export const Trade = ({ isOpen, onClose, assets }) => {
   };
 
   const handleAmountChange = (e) => {
-    const newAmount = e.target.value;
+    let newAmount = e.target.value.replace(/[^0-9.]/g, '');
+    if ((newAmount.match(/\./g) || []).length > 1) {
+      newAmount = newAmount.slice(0, -1);
+    }
 
     if (newAmount === '') {
       setConversionResult(null);
@@ -213,6 +216,11 @@ export const Trade = ({ isOpen, onClose, assets }) => {
                 <input
                   type="number"
                   id="amount"
+                  min="0"
+                  step="any"
+                  onKeyDown={(e) => {
+                    if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                  }}
                   value={amount}
                   onChange={handleAmountChange}
                   placeholder={`Enter ${amountType === 'fiat' ? 'Naira' : currency.toUpperCase()} amount`}

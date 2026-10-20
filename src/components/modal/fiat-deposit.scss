@@ -1,158 +1,306 @@
 @import "../../mixins.scss";
 
-
-.f-d-modal-start{
-  align-items:normal;
-  justify-content:left;
-  border-radius: 7px;
+.fiat-deposit-modal {
+  padding: 30px !important;
+  max-width: 480px !important;
 }
 
+.fiat-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
 
+.modal-title-wrap {
+  text-align: left;
 
-.fiat-deposit-wrap {
   h3 {
-    margin-bottom: 20px;
-    font-size: 1.5em;
-  }
-  
-  @include respond(phone) {
-    font-size: 16px;
-  }
-
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 1.2em;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.02em;
   }
 
-  .fiat-deposit-amount {
-    margin-bottom: 20px;
+  .modal-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
 
-    label {
-      font-size: 14px;
-      font-weight: 500;
-      display: block;
-      margin-bottom: 5px;
+.fiat-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .amount-input-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 12px 18px;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      background: var(--bg-input-focus);
     }
 
-    input {
-      padding: 12px 20px;
-      border-radius: 7px;
-      outline: none;
-      margin-bottom: 10px;
+    .fiat-amount-input {
       width: 100%;
-      border: 1px solid #ccc;
-      background-color: transparent;
-      color: #fff;
-    }
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
 
-    input[type="number"] {
-      font-size: 16px;
+      &::placeholder {
+        color: var(--text-muted);
+        font-size: 20px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .quick-amount-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+
+    .chip-btn {
+      background: var(--bg-pill);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: var(--accent-green-bg);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: var(--accent-green);
+      }
     }
   }
 }
 
+.deposit-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #94a3b8;
 
-.bank-peer-wrap {
-  .deposit-head-text-wrap {
+  .info-icon {
+    color: #38bdf8;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.narration-warning-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 14px;
+  border-radius: 14px;
+
+  .warning-icon {
+    color: #f59e0b;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .warning-text-block {
     display: flex;
     flex-direction: column;
-    text-align: center;
-    align-items: center;
-    gap: 4px;
+    gap: 2px;
 
-    // h2 {
-    //   margin: 0;
-    //   font-size: 1.5em;
-    // }
-    .f-d-header{
-      margin-bottom: 20px;
-      font-size: 1.5em;
-      @include respond(phone) {
-        font-size: 14px;
-      }
+    strong {
+      color: #fbbf24;
+      font-size: 13px;
+      font-weight: 700;
     }
-    .wrap{
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      padding: 10px;
-        border-radius: 7px;
-        background-color: rgb(29, 35, 43);
-        .caution-icon{
-          font-size: 16px;
-          @include respond(phone) {
-            margin-bottom: 17px;
-          }
-          
-        }
 
-      .warning-text {
-        color: rgb(210, 132, 132);
-        font-size: 14px;
-        margin-top: 10px;
-        
-        @include respond(phone) {
-          font-size: 14px;
-        }
-      }
+    p {
+      color: #fef3c7;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+      opacity: 0.9;
     }
-  }
-
-  .done-transfer-btn {
-    display: block;
-    margin: 20px auto 0;
-    padding: 10px 20px;
-    border-radius: 7px;
-    width: 70%;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #fff;
-    background: linear-gradient(127deg, hsla(0, 0%, 100%, 0.16) 17.35%, hsla(0, 0%, 85%, 0.04) 76.2%);
   }
 }
 
+.bank-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 14px;
 
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 8px;
+    border-radius: 8px;
+    transition: background 0.15s ease;
 
-  
-  .bank-details-wrap {
-    margin-top: 20px;
-  
-    .detail-item {
+    &:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    &.highlight-row {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      padding: 10px 12px;
+    }
+
+    .detail-key {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .detail-val-wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ddd;
-  
-      span {
-        margin: 0;
-        font-weight: bold;
-        width: 150px;
+      gap: 8px;
+
+      .detail-val {
         font-size: 14px;
-        @include respond(phone) {
-          font-size: 14px;
+        color: #f8fafc;
+        font-weight: 600;
+
+        &.monospace {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          letter-spacing: 0.05em;
+        }
+
+        &.amount-val {
+          font-size: 17px;
+          color: #10b981;
+          font-weight: 800;
+        }
+
+        &.narration-val {
+          font-size: 15px;
+          color: #fbbf24;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          letter-spacing: 0.08em;
+          background: rgba(245, 158, 11, 0.15);
+          padding: 3px 8px;
+          border-radius: 6px;
         }
       }
-  
-      .copy-text-wrap {
+
+      .copy-chip {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-size: 14px;
-        justify-content: flex-end;
-        @include respond(phone) {
-          font-size: 14px;
+        justify-content: center;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+          border-color: rgba(255, 255, 255, 0.2);
         }
-  
-        svg {
-          cursor: pointer;
+
+        &.highlight {
+          background: rgba(245, 158, 11, 0.2);
+          border-color: rgba(245, 158, 11, 0.35);
+          color: #fbbf24;
+
+          &:hover {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fff;
+          }
         }
       }
     }
   }
-  
+}
+
+.button-actions-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.fiat-primary-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+
+  &:hover:not(.disabled):not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+  }
+
+  &.disabled, &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #334155;
+    box-shadow: none;
+  }
+}
+
+.fiat-secondary-btn {
+  width: 100%;
+  padding: 12px 18px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}

@@ -77,8 +77,17 @@ export const FiatDeposit = () => {
               <input
                 type="number"
                 placeholder="Enter Amount"
+                min="0"
+                step="any"
+                onKeyDown={(e) => {
+                  if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                }}
                 value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
+                onChange={(e) => {
+                  let val = e.target.value.replace(/[^0-9.]/g, '');
+                  if ((val.match(/\./g) || []).length > 1) val = val.slice(0, -1);
+                  setDepositAmount(val);
+                }}
               />
             </div>
             <button

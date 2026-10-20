@@ -5,6 +5,7 @@ import { getUserProfile } from '../../api/profile';
 import { Loader } from '../../components/loader/Loader';
 import './add-account.scss';
 import { LuBadgeInfo } from 'react-icons/lu';
+import { IoClose } from 'react-icons/io5';
 import succesicon from "../../assets/succes.gif"
 
 export const AddAccount = ({ isOpen, onClose }) => {
@@ -85,10 +86,11 @@ export const AddAccount = ({ isOpen, onClose }) => {
   }
 
   return (
-    <div className={`modal-overlay ${isOpen ? 'open' : ''}`}>
-      <div className={`modal-overlay  ${isOpen ? 'open' : ''}`} onClick={onClose}> </div>
-        <div className="modal">
-        <span className="close-modal" onClick={onClose}>X</span>
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <button className="close-modal" onClick={onClose} type="button" title="Close">
+          <IoClose size={18} />
+        </button>
         <div className="account-form-container">
             {isSuccess ? (
             <div className="success-message">

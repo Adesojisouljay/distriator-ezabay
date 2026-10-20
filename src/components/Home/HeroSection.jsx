@@ -1,26 +1,28 @@
-import { Coins } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <section className="header">
+    <section className="header" style={{ background: 'var(--gradient-mesh)' }}>
       <div className="container">
         <div className="hero-content">
-          <h1 className="hero-title">
-            Welcome to Ezabay
-            {/* <Coins className="crypto-icon animate-float" size={48} /> */}
+          <div className="hero-badge animate-fadeInUp">
+            <span className="badge-dot"></span>
+            Seamless Crypto Experience
+          </div>
+          <h1 className="hero-title animate-fadeInUp">
+            Your Gateway to the <br />
+            <span className="text-gradient">Crypto Future</span>
           </h1>
-          <h2 className="hero-subtitle">
+          <h2 className="hero-subtitle animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
             Buy HIVE & HBD Easily, Trade, and Spend
           </h2>
-          <p className="hero-description">
-            Join Ezabay to start buying HIVE and HBD with ease. Our platform offers seamless transactions, 
-            minimal fees, and access to SpendHBD and Distraitor for payments and rewards. Plus, get up to 
-            55% cashback when you pay with HIVE or HBD! Get started today and empower your digital journey.
+          <p className="hero-description animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
+            Empower your digital journey with Ezabay. Access high-speed transactions,
+            minimal fees, and up to 55% cashback rewards on your daily spends.
           </p>
-          <div className="hero-buttons">
-            <Link to="/login" className="btn-primary animate-glow">Get Started</Link>
-            <a href="#features" className="btn-secondary">Learn More</a>
+          <div className="hero-buttons animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+            <Link to="/login" className="btn-primary">Get Started Now</Link>
+            <a href="#features" className="btn-secondary">Explore Features</a>
           </div>
         </div>
       </div>

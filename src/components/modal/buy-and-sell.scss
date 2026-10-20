@@ -12,7 +12,8 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  background-color: rgba(21, 31, 43, 0.4);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
   width: fit-content;
   padding: 5px 10px;
   border-radius: 12px;
@@ -20,34 +21,38 @@
 }
 
 .active {
-  background: #221d1d;
+  background: var(--accent-green-bg);
+  color: var(--accent-green) !important;
 }
 
 .buy-sell-btn {
   width: 100px;
   padding: 10px 15px;
-  // margin-top: 10px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all 0.2s;
 }
 
 .transaction-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   color: white;
-  background-color: #0056b3;
+  background-color: var(--accent-green);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
-}
+  font-weight: 600;
+  transition: background-color 0.2s ease;
 
-.active {
-  background: #030303;
-  color: whitesmoke;
+  &:hover {
+    background-color: var(--accent-green-hover);
+  }
 }
 
 .modal h4 {
@@ -107,10 +112,10 @@
     width: 150px;
   }
   h1 {
-    color: whitesmoke;
+    color: var(--text-primary);
   }
   h2 {
-    color: greenyellow;
+    color: var(--accent-green);
   }
 }
 
@@ -189,18 +194,25 @@ hr {
 
 .close-modal {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #f44336;
-  color: #fff;
-  border: none;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: scale(1.05);
+  }
 }
 
 .trans {

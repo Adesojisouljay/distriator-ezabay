@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { RiArrowDownSFill } from 'react-icons/ri';
@@ -6,40 +6,35 @@ import { Dropdown } from '../dropdown/Dropdown';
 import { getUserProfile } from '../../api/profile';
 import { generateAddress } from '../../api/ekzat';
 import './deposit-modal.scss';
-import { FaCopy } from 'react-icons/fa';
+import { FaCopy, FaCheck } from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
+import { HiExclamationTriangle } from 'react-icons/hi2';
 import QRCode from "react-qr-code";
 
 export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
-
-  const [selectedAsset, setSelectedAsset] = useState(assets[0]);
+  const [selectedAsset, setSelectedAsset] = useState(assets?.[0]);
   const [openList, setOpenList] = useState(false);
-  const  [displaySearch , setDisplaySearch] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [displaySearch, setDisplaySearch] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [copiedMemo, setCopiedMemo] = useState(false);
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText(selectedAsset?.depositAddress);
-    toast.success("Address copied to clipboarc!",{
-    style: {
-      backgroundColor: 'rgba(229, 229, 229, 0.1)',
-      color: '#fff',
-      fontSize: '16px',
-      marginTop: "60px"
-    },
-  });
+    if (!selectedAsset?.depositAddress) return;
+    navigator.clipboard.writeText(selectedAsset.depositAddress);
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2000);
+    toast.success("Deposit address copied to clipboard!");
   };
-  
+
   const handleCopyMemo = () => {
-    navigator.clipboard.writeText(selectedAsset?.memo);
-    toast.success("Memo copied to clipboarc!", {
-      style: {
-        backgroundColor: 'rgba(229, 229, 229, 0.1)',
-        color: '#fff',
-        fontSize: '16px',
-        marginTop: "60px"
-      },
-    });
+    if (!selectedAsset?.memo) return;
+    navigator.clipboard.writeText(selectedAsset.memo);
+    setCopiedMemo(true);
+    setTimeout(() => setCopiedMemo(false), 2000);
+    toast.success("Deposit memo copied to clipboard!");
   };
 
   const handleOpencoinList = () => {
@@ -47,100 +42,137 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
   };
 
   const createAddress = async (symbol) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const respone = await generateAddress(symbol);
       if (respone.success) {
-        toast.success("Account created successfully",{
-          style: {
-            backgroundColor: 'rgba(229, 229, 229, 0.1)',
-            color: '#fff',
-            fontSize: '16px',
-            marginTop: "60px"
-          },
-        });
-
+        toast.success("Account address generated successfully");
         getUserProfile(dispatch);
       }
-      setLoading(false)
     } catch (error) {
-      console.log(error)
-      setLoading(false)
+      toast.error(error.message || "Failed to generate address");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className={`fadded-container modal-overlay ${isOpen ? 'open' : ''}`} >
-    <div className={`modal-overlay  ${isOpen ? 'open' : ''}`} onClick={onClose}> </div>
-      <div className="modal ">
-        <span className="close-modal" onClick={onClose}>X</span>
-        <h2 className='d-header'>Receive</h2>
-        <div className='d-main'>
-          <div className='d-coin-select-wrapper'>
-            <span>{selectedAsset?.currency}</span>
-            <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
-              <img className="d-coin-wrap" src={selectedAsset?.image} alt="" />
-              <span className='d-picker-currency'>{selectedAsset?.currency}</span>
-              <RiArrowDownSFill  size={24}/>
-              <Dropdown 
-              user={user}
-              setCurrency={setSelectedAsset} 
-              handleOpencoinList={handleOpencoinList} 
-              openList={openList}
-              displaySearch={displaySearch} />
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`}>
+      <div className="modal">
+        <button className="close-modal" onClick={onClose} title="Close">
+          <IoClose size={18} />
+        </button>
 
+        <h2 className="d-header">Receive Crypto</h2>
+
+        {/* Coin Selector */}
+        <div className="d-main">
+          <div className="d-coin-select-wrapper">
+            <span className="label-tag">Select Asset</span>
+            <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
+              {selectedAsset?.image && (
+                <img className="d-coin-wrap" src={selectedAsset.image} alt={selectedAsset.currency} />
+              )}
+              <span className="d-picker-currency">
+                {selectedAsset?.symbol || selectedAsset?.currency || 'Select Coin'}
+              </span>
+              <RiArrowDownSFill size={20} />
             </div>
 
+            <Dropdown
+              user={user}
+              setCurrency={setSelectedAsset}
+              handleOpencoinList={handleOpencoinList}
+              openList={openList}
+              displaySearch={displaySearch}
+              selectedCurrency={selectedAsset}
+            />
           </div>
         </div>
 
-        <QRCode
-    size={256}
-    style={{ height: "auto", maxWidth: "20%", width: "20%" }}
-    value={selectedAsset?.depositAddress}
-    viewBox={`0 0 256 256`}
-  />
-
-        {selectedAsset?.depositAddress &&
-        <div className="deposit-address">
-          <span>Deposit Address:</span>
-            {/* <span 
-            className='deposit-address-info-el'
-            onClick={handleCopyAddress}
-            >
-              {selectedAsset?.depositAddress}  <FaCopy size={20}/>
-          </span> */}
-          <div className="wrap">
-            <span>{selectedAsset?.depositAddress}</span>
-            <FaCopy className='copy-icon' onClick={handleCopyAddress} size={20}/>
+        {/* QR Code Container */}
+        {selectedAsset?.depositAddress && (
+          <div className="qr-code-wrapper">
+            <div className="qr-frame">
+              <QRCode
+                size={140}
+                value={selectedAsset.depositAddress}
+                viewBox={`0 0 140 140`}
+              />
+            </div>
           </div>
-        </div>}
+        )}
 
-         {!selectedAsset?.depositAddress && <div className="deposit-address">
-          <h3 className='warning'>{selectedAsset?.currency}({selectedAsset?.symbol?.toUpperCase()})  deposit is coming soon...</h3>
-          <span className='deposit-address-info-el'>No address/network available for this asset yet</span>
-        </div>}
+        {/* Address and Memo Info */}
+        <div className="deposit-address-group">
+          {selectedAsset?.depositAddress ? (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Address</span>
+              <div className="wrap">
+                <span className="val-text">{selectedAsset.depositAddress}</span>
+                <button
+                  type="button"
+                  className="btn-copy-chip"
+                  onClick={handleCopyAddress}
+                  title="Copy address"
+                >
+                  {copiedAddress ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                  <span>{copiedAddress ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Address</span>
+              <div className="wrap">
+                <span className="val-text" style={{ color: '#f59e0b' }}>
+                  {selectedAsset?.currency || 'This asset'} deposit address is coming soon...
+                </span>
+              </div>
+            </div>
+          )}
 
-        {selectedAsset?.memo && <div className="deposit-address">
-          <span className='warning'>(please make sure you copy your memo correctly)</span>
-          <span>Deposit Memo:</span> 
-          <div className="wrap">
-            <span>{selectedAsset?.memo}</span>
-            <FaCopy className='copy-icon' onClick={handleCopyMemo} size={20}/>
-          </div>
-        </div>}
+          {/* Deposit Memo (if applicable) */}
+          {selectedAsset?.memo && (
+            <>
+              <div className="deposit-address">
+                <span className="field-label">Deposit Memo</span>
+                <div className="wrap">
+                  <span className="val-text">{selectedAsset.memo}</span>
+                  <button
+                    type="button"
+                    className="btn-copy-chip"
+                    onClick={handleCopyMemo}
+                    title="Copy memo"
+                  >
+                    {copiedMemo ? <FaCheck size={12} /> : <FaCopy size={12} />}
+                    <span>{copiedMemo ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+              </div>
 
+              {/* Memo Required Alert */}
+              <div className="memo-alert-box">
+                <HiExclamationTriangle size={18} className="alert-icon" />
+                <p>
+                  <strong>Memo is required:</strong> Both the deposit address and memo are mandatory. 
+                  Deposits sent without this exact memo cannot be credited automatically.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Notes */}
         <div className="note-wrap">
-          <header>Please Note:</header>
+          <header>Deposit Notice</header>
           <ul>
-            <li>Sending {selectedAsset?.currency} without Memo will result loss of your deposit</li>
-            <li>Send only {selectedAsset?.currency} to this address</li>
-            <li>Scan QR Code to make deposit</li>
+            <li>Send only {selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency} to this deposit address.</li>
+            <li>Credits are applied after standard blockchain network confirmations.</li>
           </ul>
         </div>
-
-
       </div>
     </div>
   );
 };
+export default DepositHiveModal;

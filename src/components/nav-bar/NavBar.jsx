@@ -11,7 +11,8 @@ import { formatDate, formatString } from '../../utils';
 import { PiGreaterThanBold } from 'react-icons/pi';
 import { userAvatar } from '../../vairables/protectedRoutes';
 import RightNav from './RightNav';
-import logo from "../../assets/Ezabay-logo.png"
+import logo from "../../assets/Ezabay-logo.png";
+import ThemeToggle from '../theme/ThemeToggle';
 
 export const NavBar = () => {
   const dispatch = useDispatch();
@@ -48,40 +49,52 @@ export const NavBar = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <div className="nav-content">
-        <Link to={"/"}><div className="logo">
-          <img src={logo} alt="" />
-        </div></Link>
+      <nav className="navbar">
+        <div className="nav-content">
+          <div className="nav-left">
+            {isAuthenticated && (
+              <button className="menu-toggle-btn" onClick={handleRightNav} aria-label="Open sidebar menu">
+                <AiOutlineMenu size={20} />
+              </button>
+            )}
 
-        {/* {(isAuthenticated && user?.role !== "user") && <div className='merchant-btn-wrapper'>
-          <Link to={"/fiat-deposit-action"}><button className="merchant-btn">Deposit</button></Link>
-          <Link to={"fiat-withdrawal-action"}><button className="merchant-btn">Withdrawal</button></Link>
-          <Link to={"/kyc-action"}><button className="merchant-btn">Kyc Actions</button></Link>
-        </div>} */}
-
-        <div className="login-toggle-wrap">
-          {isAuthenticated ? (
-            <div className='avatar-container'>
-              {!rightNav && <div className="user-top-info" >
-                <span>{user.username}</span>
-                <img 
-                  className='user-avatar'
-                  src={user?.profileImage || userAvatar}
-                  onClick={handleRightNav}
-                />
-              </div>}
-              <div className='nav-menu-wrap'>
-                <AiOutlineMenu className='left-arrow-icon' onClick={handleRightNav}  />
+            <Link to="/" className="brand-link">
+              <div className="logo">
+                <img src={logo} alt="Ezabay" />
               </div>
-            </div>
-          ) : (
-            <Link to="/login"><span className="login-btn btn-primary">Login</span></Link>
-          )}
-        </div>        
-      </div>
-    </nav>
-    {isAuthenticated && <RightNav rightNav={rightNav } handleRightNav={handleRightNav} handleLogout={handleLogout}/>}
+            </Link>
+          </div>
+
+          <div className="nav-right">
+            <ThemeToggle variant="icon" />
+            {isAuthenticated ? (
+              <Link to="/profile" className="user-profile-pill">
+                <img 
+                  className="user-avatar"
+                  src={user?.profileImage || userAvatar}
+                  alt={user?.username || "User"}
+                />
+                <div className="user-details">
+                  <span className="user-name">{user?.username}</span>
+                  {user?.role && (
+                    <span className={`user-role-badge ${user?.role}`}>
+                      {user.role}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            ) : (
+              <div className="auth-buttons">
+                <Link to="/login" className="btn-login">Log In</Link>
+                <Link to="/register" className="btn-register">Register</Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+      {isAuthenticated && (
+        <RightNav rightNav={rightNav} handleRightNav={handleRightNav} handleLogout={handleLogout} />
+      )}
     </>
   );
 };

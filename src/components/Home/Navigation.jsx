@@ -1,6 +1,7 @@
 import { Bitcoin } from 'lucide-react';
 // import logo from "../../assets/Ezabay-logo.png"
 import logo from "../../assets/Ezabay-logo.png"
+// import logo from "../../assets/Ezabay-logo.png"
 
 const Navigation = () => {
   return (

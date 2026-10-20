@@ -1,0 +1,120 @@
+@import "../../mixins.scss";
+
+.coming-soon-modal {
+  padding: 36px 30px !important;
+  max-width: 440px !important;
+  text-align: center;
+}
+
+.coming-soon-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+}
+
+.icon-glow-badge {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(56, 189, 248, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #10b981;
+
+  .rocket-icon {
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+  }
+
+  .sparkle-icon {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    color: #38bdf8;
+    animation: sparklePulse 2s infinite ease-in-out;
+  }
+
+  &:hover .rocket-icon {
+    transform: rotate(45deg) translateY(-3px);
+  }
+}
+
+@keyframes sparklePulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.coming-soon-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .cs-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #94a3b8;
+    margin: 0;
+    max-width: 340px;
+  }
+}
+
+.feature-teaser-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+
+  @include respond(phone) {
+    grid-template-columns: 1fr;
+  }
+
+  .teaser-pill {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+    text-align: left;
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+
+      &.emerald { background: #10b981; box-shadow: 0 0 6px #10b981; }
+      &.cyan { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+      &.amber { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+      &.purple { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+    }
+  }
+}
+
+.cs-btn {
+  margin-top: 4px;
+}

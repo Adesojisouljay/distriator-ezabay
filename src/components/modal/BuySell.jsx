@@ -1,45 +1,48 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Loader } from '../loader/Loader'
-import { IoCloseSharp } from 'react-icons/io5'
-import debounce from "lodash/debounce";
-import { useDispatch } from "react-redux";
-import "./buysell.scss";
-import { buyAsset, sellAsset, calculateTransaction } from "../../api/ekzat";
-import { formatNumbers, getFirstItem } from "../../utils";
-import { useSelector } from "react-redux";
-// import { Loader } from "../loader/Loader";
-import { getUserProfile } from "../../api/profile";
-import { RiArrowDownSFill, RiArrowRightSFill } from "react-icons/ri";
-import nigeria from "../../assets/nigria.png"
-import { TbArrowsExchange2 } from "react-icons/tb";
-import { IoIosArrowBack, IoIosArrowRoundBack } from 'react-icons/io';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Loader } from '../loader/Loader';
+import { IoClose } from 'react-icons/io5';
+import debounce from 'lodash/debounce';
+import { useDispatch, useSelector } from 'react-redux';
+import './buysell.scss';
+import { buyAsset, sellAsset, calculateTransaction } from '../../api/ekzat';
+import { formatNumbers, getFirstItem, formatNumberWithCommas } from '../../utils';
+import { getUserProfile } from '../../api/profile';
+import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
+import nigeria from '../../assets/nigria.png';
+import { TbArrowsExchange2 } from 'react-icons/tb';
+import { IoIosArrowRoundBack } from 'react-icons/io';
+import { HiCheckCircle } from 'react-icons/hi2';
 import { Dropdown } from '../dropdown/Dropdown';
 import Spinner from '../spinner/Spinner';
 
-
-export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactionType,}) => {
-
+export const BuySell = ({ isOpen, onClose, assets, transactionType, setTransactionType }) => {
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.ekzaUser.user);
-  const global = useSelector((state) => state);
+  const user = useSelector((state) => state.ekzaUser?.user);
+  const globalCurrency = useSelector((state) => state.currency);
 
-  const [openList, setOpenList] = useState(false)
+  const [openList, setOpenList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [currency, setCurrency] = useState(assets[0]);
-  const [amount, setAmount] = useState("");
-  const [amountType, setAmountType] = useState("crypto");
-  const [message, setMessage] = useState("");
+  const [currency, setCurrency] = useState(assets?.[0] || {});
+  const [amount, setAmount] = useState('');
+  const [amountType, setAmountType] = useState('crypto');
+  const [message, setMessage] = useState('');
   const [conversionResult, setConversionResult] = useState(null);
   const [step, setStep] = useState(1);
-  const [disable, setDisable] = useState(false)
-  
+  const [disable, setDisable] = useState(false);
+
+  useEffect(() => {
+    if (assets && assets.length > 0 && !currency?.currency) {
+      setCurrency(assets[0]);
+    }
+  }, [assets]);
+
   const abortControllerRef = useRef(null);
 
   const debouncedHandleCalculate = useCallback(
     debounce((a) => {
       handleCalculate(a);
-    }, 1000),
+    }, 800),
     [currency, amountType, transactionType]
   );
 
@@ -47,10 +50,10 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
     if (!amount) setConversionResult(null);
     setConversionResult(null);
     debouncedHandleCalculate(amount);
-  }, [amount, currency]);
+  }, [amount, currency, transactionType]);
 
   const handleCalculate = async (a) => {
-    if (!a) {
+    if (!a || isNaN(a) || Number(a) <= 0) {
       setConversionResult(null);
       return;
     }
@@ -63,7 +66,7 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
     const { signal } = abortControllerRef.current;
 
     setIsLoading(true);
-    setMessage("");
+    setMessage('');
     setConversionResult(null);
 
     try {
@@ -74,86 +77,89 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
         transactionType,
         signal,
       });
-      if (conversionData.success) {
+      if (conversionData?.success) {
         setConversionResult(conversionData);
-        setIsLoading(false);
       } else {
         setConversionResult(null);
-        setIsLoading(false);
       }
     } catch (error) {
-      if (error.name === "AbortError") {
-        console.log("Fetch aborted");
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
       } else {
-        setMessage(error.message || "An error occurred during calculation");
+        setMessage(error.message || 'An error occurred during calculation');
       }
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleTransaction = async (e) => {
     e.preventDefault();
-    setDisable(true)
-    
-
+    setDisable(true);
 
     if (!amount || isNaN(amount)) {
-      setMessage("Please enter a valid amount");
+      setMessage('Please enter a valid amount');
+      setDisable(false);
       return;
     }
 
     const amountNumber = Number(amount);
 
-    if (amountType === "fiat") {
+    if (amountType === 'fiat') {
       if (amountNumber < 500) {
-        setMessage("Amount must not be less than 500 Naira");
+        setMessage('Amount must not be less than ₦500');
+        setDisable(false);
         return;
       }
-    } else if (amountType === "crypto") {
+    } else if (amountType === 'crypto') {
       if (!conversionResult || conversionResult.convertedAmount < 500) {
-        setMessage("The equivalent amount in Naira must be at least 500");
+        setMessage('The equivalent amount in Naira must be at least ₦500');
+        setDisable(false);
         return;
       }
     }
 
     setIsLoading(true);
-    setMessage("");
+    setMessage('');
 
     try {
       const transactionData = {
         amount:
-          transactionType === "buy"
-            ? amountType === "fiat"
+          transactionType === 'buy'
+            ? amountType === 'fiat'
               ? Number(amountNumber)
-              : Number(conversionResult?.convertedCryptoAmount?.split(" ")[0])
-            : amountType === "fiat"
-            ? Number(conversionResult?.convertedCryptoAmount?.split(" ")[0])
+              : Number(conversionResult?.convertedCryptoAmount?.split(' ')[0])
+            : amountType === 'fiat'
+            ? Number(conversionResult?.convertedCryptoAmount?.split(' ')[0])
             : Number(amountNumber),
         currency: currency.currency,
         amountType,
       };
-     
-      if (transactionType === "buy") {
+
+      if (transactionType === 'buy') {
         await buyAsset(transactionData);
-      } else if (transactionType === "sell") {
+      } else if (transactionType === 'sell') {
         await sellAsset(transactionData);
       }
       getUserProfile(dispatch);
       setStep(3);
     } catch (error) {
-      setMessage(error.message || "An error occurred during the transaction");
+      setMessage(error.message || 'An error occurred during the transaction');
     } finally {
       setIsLoading(false);
-      setDisable(false)
+      setDisable(false);
     }
   };
 
   const handleCryptoAmountChange = (e) => {
-    const newAmount = e.target.value;
-    setAmountType("crypto")
+    let newAmount = e.target.value.replace(/[^0-9.]/g, '');
+    if ((newAmount.match(/\./g) || []).length > 1) {
+      newAmount = newAmount.slice(0, -1);
+    }
+    setAmountType('crypto');
     setAmount(newAmount);
-    
-    if (newAmount === "") {
+
+    if (newAmount === '') {
       setConversionResult(null);
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -161,14 +167,17 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
     } else {
       debouncedHandleCalculate(newAmount);
     }
-  };  
+  };
 
   const handleNairaAmountChange = (e) => {
-    const newAmount = e.target.value;
-    setAmountType("fiat")
+    let newAmount = e.target.value.replace(/[^0-9.]/g, '');
+    if ((newAmount.match(/\./g) || []).length > 1) {
+      newAmount = newAmount.slice(0, -1);
+    }
+    setAmountType('fiat');
     setAmount(newAmount);
-    
-    if (newAmount === "") {
+
+    if (newAmount === '') {
       setConversionResult(null);
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -176,260 +185,345 @@ export const  BuySell = ({ isOpen,onClose,assets, transactionType, setTransactio
     } else {
       debouncedHandleCalculate(newAmount);
     }
-  };  
+  };
+
+  const handleMaxCrypto = () => {
+    if (currency?.balance) {
+      const maxVal = parseFloat(currency.balance).toFixed(4);
+      setAmountType('crypto');
+      setAmount(maxVal);
+      debouncedHandleCalculate(maxVal);
+    }
+  };
+
+  const handleMaxFiat = () => {
+    if (user?.nairaBalance) {
+      const maxVal = parseFloat(user.nairaBalance).toFixed(2);
+      setAmountType('fiat');
+      setAmount(maxVal);
+      debouncedHandleCalculate(maxVal);
+    }
+  };
 
   const handleOpencoinList = () => {
     setOpenList(!openList);
   };
 
+  const handleCloseModal = () => {
+    setStep(1);
+    setAmount('');
+    setConversionResult(null);
+    setMessage('');
+    onClose();
+  };
+
+  const activeRate =
+    globalCurrency?.selectedCurrency?.name === 'USD'
+      ? currency?.usdValue
+      : currency?.nairaValue;
+
   return (
-    <div>
-        <div className={`fadded-container b-s-modal-overlay ${isOpen ? "open" : ""}`}>
-      <div
-        className={`b-s-modal-overlay md  ${isOpen ? "open" : ""}`}
-        onClick={onClose}
-      >
-        {" "}
-      </div>
+    <div className={`b-s-modal-overlay ${isOpen ? 'open' : ''}`}>
       <div className="b-s-modal">
-        {step === 2 && (<IoIosArrowRoundBack onClick={()=> setStep(1)} size={30} className='backmodal'/>)}
-        <IoCloseSharp size={18} className="close-modal" onClick={onClose} />
+        {step === 2 && (
+          <div className="backmodal" onClick={() => setStep(1)} title="Back to edit">
+            <IoIosArrowRoundBack size={24} />
+          </div>
+        )}
+
+        <button className="close-modal" onClick={handleCloseModal} title="Close">
+          <IoClose size={18} />
+        </button>
+
         {isLoading && <Loader />}
-        
 
-        <div className="buysell-container" >
-        {step === 1 && (<div className="toggle-buttons">
-            <button
-              className={`${transactionType === 'buy' ? 'active' : 'trans'}  buy-sell-btn`}
-              onClick={() => setTransactionType('buy')}
-            >
-              Buy
-            </button>
-            <button
-              className={`${transactionType === 'sell' ? 'active' : 'trans'} buy-sell-btn`}
-              onClick={() => setTransactionType('sell')}
-            >
-              Sell
-            </button>
-          </div>)}
-          {message && <p className='warning'>{message}</p>}
-          {step === 1 && (<div className="buy-sell-parent-wrap" >
-          <div className="spend-wrap">
-            <h3>Fiat</h3>
-            <div className="spend-component">
-              <div className="spend-select-wrap">
-                <img src={nigeria} alt="" />
-                <span>NGN</span>
-                <RiArrowRightSFill />
+        <div className="buysell-container">
+          {step === 1 && (
+            <>
+              {/* Buy / Sell Toggle Tabs */}
+              <div className="toggle-buttons">
+                <button
+                  type="button"
+                  className={`buy-sell-btn ${transactionType === 'buy' ? 'active' : ''}`}
+                  onClick={() => setTransactionType('buy')}
+                >
+                  Buy {currency?.symbol?.toUpperCase() || 'Crypto'}
+                </button>
+                <button
+                  type="button"
+                  className={`buy-sell-btn ${transactionType === 'sell' ? 'active' : ''}`}
+                  onClick={() => setTransactionType('sell')}
+                >
+                  Sell {currency?.symbol?.toUpperCase() || 'Crypto'}
+                </button>
               </div>
-              <input 
-                type="number" 
-                placeholder="Enter naira amount" 
-                id="amount"
-                value={amountType === "fiat" ? amount : getFirstItem(conversionResult?.convertedNairaAmount)}
-                onChange={handleNairaAmountChange}
-              />
-            </div>
 
-            <div className="fiat-bal-wrap">
-              <span>NGN balance:</span> 
-              <span>{user?.nairaBalance?.toFixed(3)} </span>
-            </div>
-          </div>
+              {message && <p className="warning">{message}</p>}
 
-          <div className="rate-wrap">
-            1 {currency.currency?.toUpperCase()} === {global.currency.selectedCurrency === "NGN" ? 
-            currency.nairaValue : 
-            currency.usdValue
-            }
-            </div>
+              <div className="buy-sell-parent-wrap">
+                {/* Fiat Field */}
+                <div className="spend-wrap">
+                  <div className="input-card-top">
+                    <h3>{transactionType === 'buy' ? 'You Pay' : 'You Receive'}</h3>
+                    <div className="bal-display">
+                      <span>NGN Balance:</span>
+                      <span className="bal-val">
+                        ₦{formatNumberWithCommas(user?.nairaBalance || 0)}
+                      </span>
+                      {transactionType === 'buy' && (
+                        <span className="btn-max" onClick={handleMaxFiat}>
+                          MAX
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-          <div className="get-wrap">
-            <h3>Crypto</h3>
-            <div className="get-component">
-              <div className="get-select-wrap" onClick={handleOpencoinList}>
-              <img src={currency.image} alt="" />
-                <span>{currency.currency}</span>
-                <RiArrowDownSFill />
+                  <div className="spend-component">
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      id="fiat-amount"
+                      min="0"
+                      step="any"
+                      onKeyDown={(e) => {
+                        if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                      }}
+                      value={
+                        amountType === 'fiat'
+                          ? amount
+                          : getFirstItem(conversionResult?.convertedNairaAmount) || ''
+                      }
+                      onChange={handleNairaAmountChange}
+                    />
+                    <div className="spend-select-wrap">
+                      <img src={nigeria} alt="NGN" />
+                      <span>NGN</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Rate Chip */}
+                <div className="rate-wrap">
+                  <TbArrowsExchange2 className="rate-icon" size={16} />
+                  <span>
+                    1 {currency?.currency?.toUpperCase() || 'CRYPTO'} ≈{' '}
+                    ₦{formatNumberWithCommas(activeRate || 0)}
+                  </span>
+                </div>
+
+                {/* Crypto Field */}
+                <div className="get-wrap">
+                  <div className="input-card-top">
+                    <h3>{transactionType === 'buy' ? 'You Receive' : 'You Pay'}</h3>
+                    <div className="bal-display">
+                      <span>{currency?.symbol?.toUpperCase() || 'Crypto'} Balance:</span>
+                      <span className="bal-val">
+                        {parseFloat(currency?.balance || 0).toFixed(4)}
+                      </span>
+                      {transactionType === 'sell' && (
+                        <span className="btn-max" onClick={handleMaxCrypto}>
+                          MAX
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="get-component">
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      id="crypto-amount"
+                      min="0"
+                      step="any"
+                      onKeyDown={(e) => {
+                        if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                      }}
+                      value={
+                        amountType === 'crypto'
+                          ? amount
+                          : getFirstItem(conversionResult?.convertedCryptoAmount) || ''
+                      }
+                      onChange={handleCryptoAmountChange}
+                    />
+                    <div className="get-select-wrap" onClick={handleOpencoinList}>
+                      {currency?.image && <img src={currency.image} alt={currency.currency} />}
+                      <span>{currency?.symbol || currency?.currency || 'SELECT'}</span>
+                      <RiArrowDownSFill size={18} />
+                    </div>
+                  </div>
+
+                  <Dropdown
+                    user={user}
+                    setCurrency={setCurrency}
+                    handleOpencoinList={handleOpencoinList}
+                    openList={openList}
+                    selectedCurrency={currency}
+                  />
+                </div>
+
+                {/* Breakdown Summary */}
+                <div className="fees-review">
+                  <div className="fees-rap">
+                    <span>Order Value</span>
+                    {!conversionResult ? (
+                      <span>{!amount ? '---' : 'Calculating...'}</span>
+                    ) : (
+                      <span>
+                        {transactionType === 'buy'
+                          ? `${conversionResult?.cryptoAmount} (${conversionResult?.convertedNairaAmount})`
+                          : `${conversionResult?.convertedNairaAmount} (${conversionResult?.convertedCryptoAmount})`}
+                      </span>
+                    )}
+                  </div>
+                  <div className="fees-rap">
+                    <span>Estimated Fee</span>
+                    {!conversionResult ? (
+                      <span>{!amount ? '---' : 'Calculating...'}</span>
+                    ) : (
+                      <span>
+                        {conversionResult?.fiatFee
+                          ? `₦${conversionResult.fiatFee}`
+                          : 'Zero Fee'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="fees-rap">
+                    <span>Trading Bonus</span>
+                    <span>0.000</span>
+                  </div>
+                  <div className="fees-rap total-row">
+                    <span>You Will Get</span>
+                    {!conversionResult ? (
+                      <span>{!amount ? '---' : 'Calculating...'}</span>
+                    ) : (
+                      <span>
+                        {transactionType === 'buy'
+                          ? conversionResult?.cryptoAmountAfterFee || conversionResult?.cryptoAmount
+                          : conversionResult?.fiatAmountAfterFee || conversionResult?.convertedNairaAmount}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action CTA */}
+                <div className="buy-sell-btn-wrap">
+                  <button
+                    type="button"
+                    className="buy-sell-btn-main"
+                    onClick={() => setStep(2)}
+                    disabled={isLoading || !amount || !conversionResult}
+                  >
+                    {isLoading ? 'Calculating Rate...' : `Review ${transactionType === 'buy' ? 'Purchase' : 'Sale'}`}
+                  </button>
+                </div>
               </div>
-            
-              <input 
-                type="number" 
-                placeholder="Enter crypto amount"
-                value={amountType === "crypto" ? amount : getFirstItem(conversionResult?.convertedCryptoAmount)}
-                onChange={handleCryptoAmountChange}
-              />
-            </div>
-            <div className="crypto-bal-wrap">
-              <span>{currency.currency} balance:</span> 
-              <span>{parseFloat(currency.balance).toFixed(3)}</span>
-            </div>
-          
-            <Dropdown 
-              user={user} 
-              setCurrency={setCurrency} 
-              handleOpencoinList={handleOpencoinList} 
-              openList={openList}
-            />
+            </>
+          )}
 
-          </div>
-
-          {transactionType === 'buy' && <div className="fees-review">
-                <div className="fees-rap"> 
-                  <span>Amount</span>  
-                  {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                  <span>{conversionResult?.cryptoAmount} ({conversionResult?.convertedNairaAmount})</span>}
-                </div>
-                <div className="fees-rap"> 
-                  <span>fee</span>  
-                    {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                    <span>{conversionResult?.cryptoFee} ({conversionResult?.fiatFee})</span>}
-                </div>
-                <div className="fees-rap"> 
-                  <span>You will get</span>  
-                  {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                  <span>{conversionResult?.cryptoAmountAfterFee} ({conversionResult?.fiatAmountAfterFee})</span>}
-                </div>
-                <div className="fees-rap"> <span>Tradibg Bounce</span>  <span>0.000</span></div>
-          </div>}
-
-          {transactionType === 'sell' && <div className="fees-review">
-                <div className="fees-rap"> 
-                  <span>Amount</span>  
-                  {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                  <span>{(conversionResult?.convertedNairaAmount)} ({conversionResult?.convertedCryptoAmount})</span>}
-                </div>
-                <div className="fees-rap"> 
-                  <span>fee</span>  
-                    {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                    <span>{(conversionResult?.fiatFee)} Naira ({conversionResult?.cryptoFee})</span>}
-                </div>
-                <div className="fees-rap"> 
-                  <span>You will get</span>  
-                  {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                  <span>{(conversionResult?.fiatAmountAfterFee)} ({conversionResult?.cryptoAmountAfterFee})</span>}
-                </div>
-                <div className="fees-rap"> <span>Tradibg Bounce</span>  <span>0.000</span></div>
-          </div>}
-          
-          
-
-          <div className="buy-sell-btn-wrap" >
-          {/* <button className="buy-sell-btn" onClick={()=>{setNewStep(2)}}>Proceed</button> */}
-          <button
-            className="buy-sell-btn"
-            onClick={()=>setStep(2)}
-            disabled={isLoading || !amount || !conversionResult}
-            style={{ cursor: isLoading || !amount || !conversionResult ? "not-allowed" : "pointer" }}
-          >
-           Proceed
-          </button>
-          </div>
-          </div>)}
-          {step === 2 &&(
+          {step === 2 && (
             <div className="review-buy-sell">
+              <div className="modal-title-wrap">
+                <h2>Confirm {transactionType === 'buy' ? 'Buy Order' : 'Sell Order'}</h2>
+              </div>
+
+              {message && <p className="warning">{message}</p>}
+
               <div className="review-box-wrap">
                 <div className="box-left">
-                {transactionType === "sell" ? <span>You get</span>: <span>Converting</span> }
+                  <span className="review-label">
+                    {transactionType === 'buy' ? 'You Pay' : 'You Sell'}
+                  </span>
                   <div className="review-coin-wrap">
-                    <img src={nigeria} alt="" />
-                    {/* <span>{conversionResult?.convertedNairaAmount}</span> */}
-                    <span>{conversionResult?.convertedNairaAmount.split(' ')[0]}</span>
+                    <img src={transactionType === 'buy' ? nigeria : currency.image} alt="" />
+                    <span>
+                      {transactionType === 'buy'
+                        ? conversionResult?.convertedNairaAmount?.split(' ')[0]
+                        : conversionResult?.convertedCryptoAmount?.split(' ')[0]}
+                    </span>
+                  </div>
+                  <span className="sub-val">
+                    {transactionType === 'buy' ? 'NGN' : currency.symbol?.toUpperCase()}
+                  </span>
+                </div>
 
-                  </div>
-                  <span>{conversionResult?.convertedCryptoAmount}</span>
+                <div className="exchange-circle">
+                  <TbArrowsExchange2 size={20} />
                 </div>
-                <div className="arrow-right-wrap">
-                <svg width="159" height="7" viewBox="0 0 159 7" fill="none" class="absolute left-1/2 top-1/2 block translate-x-[-50%] translate-y-[-50%] light:hidden mobile:hidden"><path d="M1 3.5H151" stroke="url(#paint0_linear_622_17075)" stroke-width="1.5" stroke-linecap="square" stroke-dasharray="0.1 5"></path><path d="M155 6.5L159 3.5L155 0.5" fill="#FBFBFB"></path><defs><linearGradient id="paint0_linear_622_17075" x1="146.604" y1="4.74994" x2="0.249478" y2="6.49899" gradientUnits="userSpaceOnUse"><stop stop-color="white"></stop><stop offset="1" stop-color="white" stop-opacity="0"></stop></linearGradient></defs></svg>
-                <div className="exchange-iconwrap">
-                <TbArrowsExchange2 size={24} className='exc-icon' />
-                </div>
-                </div>
+
                 <div className="box-left">
-                  {transactionType === "sell" ? <span>Converting</span> : <span>You get</span>}
+                  <span className="review-label">You Receive</span>
                   <div className="review-coin-wrap">
-                    <img src={currency.image} alt="" />
-                    <span>{conversionResult?.convertedCryptoAmount.split(' ')[0]}</span>
+                    <img src={transactionType === 'buy' ? currency.image : nigeria} alt="" />
+                    <span>
+                      {transactionType === 'buy'
+                        ? conversionResult?.cryptoAmountAfterFee?.split(' ')[0] ||
+                          conversionResult?.cryptoAmount?.split(' ')[0]
+                        : conversionResult?.fiatAmountAfterFee?.split(' ')[0] ||
+                          conversionResult?.convertedNairaAmount?.split(' ')[0]}
+                    </span>
                   </div>
-                  <span>{conversionResult?.convertedNairaAmount}</span>
+                  <span className="sub-val">
+                    {transactionType === 'buy' ? currency.symbol?.toUpperCase() : 'NGN'}
+                  </span>
                 </div>
-                
               </div>
 
-              {/* This is should be on the first step */}
-              {/* <div className="rate-wrap"> 1 USDC = 0.0237 HiVE</div> */}
-
-              {/* <div className="fees-review">
-                <div className="fees-rap"> <span>Amount</span>  <span>100 Hive</span></div>
-                <div className="fees-rap"> <span>fee</span>  <span>2 Hive</span></div>
-                <div className="fees-rap"> <span>You will get</span>  <span>98 Hive</span></div>
-                <div className="fees-rap"> <span>Order Type</span>  <span>Buy</span></div>
-                <div className="fees-rap"> <span>Trading Bounce</span>  <span>0.30</span></div>
-              </div> */}
-
-              {transactionType === 'buy' && <div className="fees-review">
-                  <div className="fees-rap"> 
-                    <span>Amount</span>  
-                    {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                    <span>{conversionResult?.cryptoAmount} ({conversionResult?.convertedNairaAmount})</span>}
-                  </div>
-                  <div className="fees-rap"> 
-                    <span>fee</span>  
-                      {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                      <span>{conversionResult?.cryptoFee} ({conversionResult?.fiatFee})</span>}
-                  </div>
-                  <div className="fees-rap"> 
-                    <span>You will get</span>  
-                    {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                    <span>{conversionResult?.cryptoAmountAfterFee} ({conversionResult?.fiatAmountAfterFee})</span>}
-                  </div>
-                  <div className="fees-rap"> <span>Tradibg Bounce</span>  <span>0.000</span></div>
-              </div>}
-
-              {transactionType === 'sell' && <div className="fees-review">
-                    <div className="fees-rap"> 
-                      <span>Amount</span>  
-                      {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                      <span>{(conversionResult?.convertedNairaAmount)} ({conversionResult?.convertedCryptoAmount})</span>}
-                    </div>
-                    <div className="fees-rap"> 
-                      <span>fee</span>  
-                        {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                        <span>{(conversionResult?.fiatFee)} Naira ({conversionResult?.cryptoFee})</span>}
-                    </div>
-                    <div className="fees-rap"> 
-                      <span>You will get</span>  
-                      {!conversionResult ? <span>{!amount ? "---" : "Calculating..."}</span> : 
-                      <span>{(conversionResult?.fiatAmountAfterFee)} ({conversionResult?.cryptoAmountAfterFee})</span>}
-                    </div>
-                    <div className="fees-rap"> <span>Trading Bonus</span>  <span>0.000</span></div>
-              </div>}
-
+              <div className="fees-review">
+                <div className="fees-rap">
+                  <span>Order Type</span>
+                  <span>Instant Market</span>
+                </div>
+                <div className="fees-rap">
+                  <span>Exchange Rate</span>
+                  <span>
+                    1 {currency?.currency?.toUpperCase()} = ₦{formatNumberWithCommas(activeRate || 0)}
+                  </span>
+                </div>
+                <div className="fees-rap">
+                  <span>Network Fee</span>
+                  <span>{conversionResult?.fiatFee ? `₦${conversionResult.fiatFee}` : 'Zero Fee'}</span>
+                </div>
+                <div className="fees-rap total-row">
+                  <span>Total To Receive</span>
+                  <span>
+                    {transactionType === 'buy'
+                      ? conversionResult?.cryptoAmountAfterFee || conversionResult?.cryptoAmount
+                      : conversionResult?.fiatAmountAfterFee || conversionResult?.convertedNairaAmount}
+                  </span>
+                </div>
+              </div>
 
               <div className="buy-btn-wrap">
-                {/* <button onClick={()=> setStep(1)} className='back'>Back</button> */}
                 <button
-                  style={{cursor: disable ? "not-allowed" : "pointer"}}
-                  onClick={handleTransaction} 
-                  disabled={disable} 
-                  // className={disable ? "grey" :""} 
+                  type="button"
+                  onClick={handleTransaction}
+                  disabled={disable}
+                  className="buy-sell-btn-main"
                 >
-                {disable ? <Spinner /> : (transactionType === "buy" ? "Buy" : "Sell") }
+                  {disable ? <Spinner /> : `Confirm ${transactionType === 'buy' ? 'Buy' : 'Sell'}`}
                 </button>
               </div>
             </div>
           )}
+
           {step === 3 && (
             <div className="succe">
-              <h3>Transaction Successful</h3>
-              <button onClick={onClose} className="btn">Close</button>
+              <div className="success-icon-wrap">
+                <HiCheckCircle size={44} />
+              </div>
+              <h3>Order Completed!</h3>
+              <p>
+                Your {transactionType === 'buy' ? 'purchase' : 'sale'} of{' '}
+                <strong>{currency?.symbol?.toUpperCase()}</strong> was executed successfully.
+              </p>
+              <button type="button" onClick={handleCloseModal} className="btn-done">
+                Done
+              </button>
             </div>
           )}
         </div>
-        
       </div>
     </div>
-
-    </div>
-  )
-}
+  );
+};
+export default BuySell;

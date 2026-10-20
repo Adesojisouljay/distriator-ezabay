@@ -1,293 +1,1240 @@
 @import "../mixins.scss";
-.profile-container {
-    padding: 20px;
-    width: 60%;
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    @include respond(phone) {
-      width: 95%;
-      padding: 5px;
+
+// -------------------------------------------------------------
+// PROFILE PAGE CONTAINER & LAYOUT
+// -------------------------------------------------------------
+.profile-page-root {
+  width: 100%;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px 80px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  @include respond(phone) {
+    padding: 14px 12px 60px;
+  }
+}
+
+.profile-page-wrapper {
+  width: 100%;
+  max-width: 1080px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    gap: 16px;
+  }
+}
+
+// Breadcrumb
+.profile-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-muted);
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--accent-green-hover);
+      transform: translateX(-3px);
     }
   }
-  
-  .profile-header {
+
+  .separator {
+    color: var(--border-subtle);
+  }
+
+  .current {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+}
+
+// -------------------------------------------------------------
+// HERO IDENTITY CARD
+// -------------------------------------------------------------
+.profile-hero-card {
+  background: var(--bg-card-gradient);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+    opacity: 0.8;
+  }
+
+  @include respond(phone) {
+    padding: 18px 14px;
+    border-radius: 16px;
+    gap: 16px;
+  }
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+  width: 100%;
+
+  @include respond(phone) {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+
+  @include respond(phone) {
+    width: 82px;
+    height: 82px;
+  }
+
+  .profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-green);
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25);
+    background: var(--bg-canvas);
+  }
+
+  .avatar-edit-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    border: 2px solid var(--bg-canvas);
+    color: #03141a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: var(--accent-green-hover);
+      transform: scale(1.1);
+    }
+
+    @include respond(phone) {
+      width: 28px;
+      height: 28px;
+    }
+  }
+}
+
+.identity-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+
+  @include respond(phone) {
+    align-items: center;
+    text-align: center;
+  }
+
+  .name-role-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
+
+    @include respond(phone) {
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+      letter-spacing: -0.4px;
+      word-break: break-word;
+
+      @include respond(phone) {
+        font-size: 19px;
+        text-align: center;
+      }
+    }
+
+    .role-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-green);
+      white-space: nowrap;
+
+      &.admin {
+        background: rgba(245, 158, 11, 0.12);
+        border-color: rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+      }
+
+      &.merchant {
+        background: rgba(6, 182, 212, 0.12);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #06b6d4;
+      }
+    }
+  }
+
+  .user-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    min-width: 0;
+
+    @include respond(phone) {
+      justify-content: center;
+      gap: 8px;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .username-tag {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      @include respond(phone) {
+        font-size: 13px;
+      }
+
+      .copy-mini-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 2px 4px;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+        transition: color var(--transition-fast);
+
+        &:hover {
+          color: var(--accent-green);
+        }
+      }
+    }
+
+    .joined-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--text-muted);
+
+      @include respond(phone) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .avatar-upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: var(--radius-md);
+    width: max-content;
+
+    @include respond(phone) {
+      width: 100%;
+      justify-content: center;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .upload-note {
+      font-size: 12px;
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .avatar-save-btn {
+      background: var(--accent-green);
+      color: #03141a;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+
+      &:hover {
+        background: var(--accent-green-hover);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .avatar-cancel-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+  }
+}
+
+// Quick stats bar
+.profile-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include respond(tab) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond(phone) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 14px;
+  }
+
+  .stat-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    min-width: 0;
+    box-sizing: border-box;
+
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.05);
+        border-color: rgba(16, 185, 129, 0.3);
+        transform: translateY(-2px);
+      }
+    }
+
+    @include respond(phone) {
+      padding: 10px 8px;
+      gap: 8px;
+    }
+
+    .stat-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      &.points {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      &.kyc {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+      }
+
+      &.bank {
+        background: rgba(139, 92, 246, 0.1);
+        color: #a78bfa;
+      }
+
+      @include respond(phone) {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+      }
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include respond(phone) {
+          font-size: 10px;
+        }
+      }
+
+      .stat-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include respond(phone) {
+          font-size: 12px;
+        }
+
+        &.kyc-badge {
+          font-size: 13px;
+
+          @include respond(phone) {
+            font-size: 12px;
+          }
+
+          &.verified {
+            color: var(--accent-green);
+          }
+          &.pending {
+            color: #f59e0b;
+          }
+        }
+      }
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// PROFILE CONTENT GRID (STACKS ON TABLET & PHONE)
+// -------------------------------------------------------------
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  @include respond(tab) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @include respond(phone) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.profile-grid-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    gap: 16px;
+  }
+}
+
+// Reusable Profile Card
+.profile-card {
+  background: var(--bg-card-gradient);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 10px;
+
+    @include respond(phone) {
+      padding: 14px 16px;
+    }
+
+    .card-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+
+      .card-header-icon {
+        color: var(--accent-green);
+        flex-shrink: 0;
+      }
+
+      h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include respond(phone) {
+          font-size: 15px;
+        }
+      }
+    }
+
+    .card-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+
+      &.primary {
+        background: var(--accent-green);
+        color: #03141a;
+
+        &:hover {
+          background: var(--accent-green-hover);
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+    .referral-rate-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+  }
+
+  .card-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    @include respond(phone) {
+      padding: 14px 16px;
+      gap: 14px;
+    }
+  }
+}
+
+// Form Field Styles
+.info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .field-value-box {
+    background: var(--bg-surface-elevated, rgba(255, 255, 255, 0.025));
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    @include respond(phone) {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    &.with-badge {
+      .field-text-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+
+        .field-icon {
+          color: var(--text-muted);
+          flex-shrink: 0;
+        }
+
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 0;
+        }
+      }
+
+      .verified-pill {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent-green);
+        background: rgba(16, 185, 129, 0.12);
+        padding: 3px 8px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-left: 8px;
+      }
+    }
+
+    &.copyable {
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+
+      &:hover {
+        border-color: rgba(16, 185, 129, 0.35);
+        background: rgba(16, 185, 129, 0.04);
+      }
+
+      .field-text-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+
+        .field-icon {
+          color: var(--text-muted);
+          flex-shrink: 0;
+        }
+
+        .monospace {
+          font-family: var(--font-mono, monospace);
+          font-weight: 600;
+          color: var(--accent-green);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 0;
+        }
+      }
+
+      .copy-action-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        padding: 4px;
+      }
+    }
+  }
+}
+
+// Preference Rows
+.pref-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pref-label-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .pref-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .pref-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  }
+
+  .pref-control-wrap {
+    @include respond(phone) {
+      width: 100%;
+    }
+  }
+
+  .currency-pill-selector {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    border-radius: 9999px;
+    padding: 3px;
+    gap: 2px;
+
+    @include respond(phone) {
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+    }
+
+    .curr-btn {
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+
+      @include respond(phone) {
+        flex: 1;
+        text-align: center;
+        padding: 7px 10px;
+      }
+
+      &.active {
+        background: var(--accent-green);
+        color: #041217;
+        font-weight: 700;
+        box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      }
+    }
+  }
+}
+
+// Security Row
+.security-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .sec-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .sec-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sec-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  }
+
+  .change-password-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+
+    @include respond(phone) {
+      width: 100%;
+      text-align: center;
+      padding: 10px 14px;
+    }
+
+    &:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: var(--accent-green);
+    }
+  }
+}
+
+// Bank Accounts List
+.bank-accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.bank-account-card {
+  background: var(--bg-surface-elevated, rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all var(--transition-fast);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  &:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.03);
+  }
+
+  .bank-card-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    @include respond(phone) {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+  }
+
+  .bank-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+
+    .bank-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      @include respond(phone) {
+        font-size: 13px;
+      }
+    }
+
+    .account-number {
+      font-size: 13px;
+      color: var(--accent-green);
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      @include respond(phone) {
+        font-size: 12px;
+      }
+    }
+
+    .account-holder {
+      font-size: 12px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      @include respond(phone) {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .delete-account-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+    }
+  }
+}
+
+// Empty Bank State
+.empty-bank-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .empty-icon {
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    opacity: 0.6;
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 340px;
+    margin: 0 0 8px 0;
+  }
+
+  .add-first-bank-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-green);
+    color: #03141a;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--accent-green-hover);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Referral Section
+.referral-instructions {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+
+  strong {
+    color: #f59e0b;
+  }
+}
+
+.referral-link-box {
+  background: var(--bg-surface-elevated, rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 8px 10px 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .ref-url {
+    font-size: 13px;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono, monospace);
+    min-width: 0;
+    flex: 1;
+
+    @include respond(phone) {
+      font-size: 12px;
+      width: 100%;
+    }
+  }
+
+  .copy-ref-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-green);
+    color: #03141a;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+
+    @include respond(phone) {
+      width: 100%;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    &:hover {
+      background: var(--accent-green-hover);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.referral-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include respond(phone) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .perk-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
-    margin-bottom: 20px;
-    
-    .profile-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 20px;
-      @include respond(phone) {
-        width: 70px;
-        height: 70px;
-      }
-    }
-  
-    h2 {
-      font-size: 24px;
-      margin: 0;
-      @include respond(phone) {
-        font-size: 18px;
-      }
-    }
-    p{
-      @include respond(phone) {
-        font-size: 14px;
-      }
-    }
+    text-align: center;
+    gap: 2px;
 
-    .kyc-status {
-        font-weight: bold;
-        font-size: 20px;
-        @include respond(phone) {
-          font-size: 14px;
-        }
-    
-        &.kyc-approved {
-            color: green;
-        }
-    
-        &.kyc-rejected {
-            color: red;
-        }
-    
-        &.kyc-pending {
-            color: orange;
-        }
-    }    
-  
-    .edit-title {
-      color: white;
-      border: none;
-      font-size: 20px;
-      margin-left: auto;
-    }
-  }
-  
-  
-    .detail-item {
-      display: flex;
+    @include respond(phone) {
+      padding: 8px 10px;
+      flex-direction: row;
       justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: 1px solid gray;
-      border-radius: 7px;
-      width: 100%;
-      @include respond(phone) {
-        padding: 5px 10px;
-      }
-
-      
-  
-      span {
-        font-weight: bold;
-        @include respond(phone) {
-          font-size: 13px;
-        }
-      }
-
-      .profile-details {
-        display: flex;
-        flex-direction: column;
-        width: 50%;
-      }
-
-      .profileImage{
-        font-size: 30px;
-        @include respond(phone) {
-          font-size: 13px;
-        }
-      }
-
-      .image-select-input{
-        display: flex;
-        // flex-direction: column;
-        align-items: center;
-        width: 50%;
-        gap: 10px;
-        @include respond(phone) {
-          flex-direction: column;
-        }
-        // width: 500%;
-        input {
-          padding: 8px;
-          border-radius: 5px;
-          border: 1px solid grey;
-          width: 50%;
-          background: transparent;
-          color: #fff;
-          @include respond(phone) {
-            width: 100%;
-            padding: 5px 8px;
-          }
-          // display: none;
-        }
-
-        button{
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          font-size: 14px;
-          width: 50%;
-          align-self: flex-end;
-          padding: 10px;
-          background-color: #007bff;
-          color: #fff;
-          cursor: pointer;
-          border-radius: 8px;
-          @include respond(phone) {
-            width: 100%;
-            padding: 5px 10px;
-          }
-        }
-      }
-
-      input {
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid grey;
-        width: max-content;
-        background: transparent;
-        color: #fff;
-      }
-  
-    }
-  
-    h3 {
-      font-size: 18px;
-      @include respond(phone) {
-        font-size: 14px;
-      }
-    }
-  
-    ul {
-      list-style-type: none;
-      padding: 0;
-      
-      li {
-        margin: 5px 0;
-        padding: 10px;
-        border-radius: 5px;
-        @include respond(phone) {
-          font-size: 14px;
-          margin:  0px;
-          padding: 5px 0px;
-
-        }
-      }
-    }
-  
-    .add-account {
-      display: flex;
-      flex-direction: column;
-  
-      input {
-        padding: 8px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
-  
-      .add-button {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 5px;
-        font-size: 14px;
-        cursor: pointer;
-        align-self: flex-start;
-  
-        &:hover {
-          background-color: #218838;
-        }
-      }
-    }
-  
-
-  .edit-pencil-wrap{
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-    @include respond(phone) {
-      width: 25px;
-      height: 25px;
+      text-align: left;
     }
 
-    
+    .perk-number {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f59e0b;
+    }
+
+    .perk-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
   }
-  .add-acct-pencil-wrap{
+}
 
-    position: relative;
-    display:none;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-    @include respond(phone) {
-      display: block;
-      width: 25px;
-      height: 25px;
+// -------------------------------------------------------------
+// LIGHT THEME OVERRIDES FOR PROFILE PAGE
+// -------------------------------------------------------------
+[data-theme="light"] {
+  .profile-hero-card,
+  .profile-card {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .profile-quick-stats .stat-box {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.06);
+
+    &.clickable:hover {
+      background: #f1f5f9;
+      border-color: rgba(16, 185, 129, 0.35);
     }
   }
 
+  .info-field .field-value-box,
+  .referral-link-box,
+  .bank-account-card {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.06);
 
-  // Class to display on phone screens only
-  .edit-pencil-phone {
-    display: none;
-  
-    @include respond(phone) {
-      display: flex;
-    }
-  }
-  
-  // Class to hide on phone screens only
-  .edit-pencil-desktop {
-    display: flex;
-  
-    @include respond(phone) {
-      display: none;
+    &:hover {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: #f1f5f9;
     }
   }
 
+  .currency-pill-selector {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
 
+    .curr-btn {
+      color: #64748b;
 
-  .profile-account-wrap{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .wrap{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      @include respond(phone) {
-        margin-bottom: 5px;
+      &.active {
+        background: var(--accent-green);
+        color: #ffffff;
       }
     }
   }
 
-  .delete-icon{
-    @include respond(phone) {
-      font-size: 18px;
+  .security-action-row .change-password-btn {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #0f172a;
+
+    &:hover {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
     }
-    
   }
+
+  .referral-perks-grid .perk-item {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+}

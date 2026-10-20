@@ -1,13 +1,16 @@
 import React from 'react';
+import { IoClose } from 'react-icons/io5';
 import "./TransactionList.scss";
 
 function TransactionList({ isOpen, onClose, trxListData: data }) {
-  return (
-    <div className={`fadded-container modal-overlay ${isOpen ? 'open' : ''}`} >
-      <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}></div>
+  if (!isOpen) return null;
 
-      <div className="modal testing">
-        <span className="close-modal" onClick={onClose}>X</span>
+  return (
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
+      <div className="modal testing" onClick={(e) => e.stopPropagation()}>
+        <button className="close-modal" onClick={onClose} type="button" title="Close">
+          <IoClose size={18} />
+        </button>
 
         <div className="trx-list-container">
           <h2>Transaction Details</h2>

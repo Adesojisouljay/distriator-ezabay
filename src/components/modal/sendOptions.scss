@@ -1,22 +1,105 @@
-.send-options-container{
+@import "../../mixins.scss";
+
+.send-options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .options-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: -8px;
+  }
+
+  .options-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
+    margin-top: 6px;
+  }
 
-    .options-wrapper{
+  .options-picker {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--bg-card-item);
+    border: 1px solid var(--border-item);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .picker-icon-wrap {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--accent-green-bg);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .picker-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .picker-title-row {
         display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 5px;
-    }
+        align-items: center;
+        gap: 8px;
 
-    .options-picker{
-        border: 1px solid rgb(42 51 62);
-        padding: 15px;
-        cursor: pointer;
-
-        .picker-info{
-            color: gold;
+        h4 {
+          font-size: 15px;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin: 0;
         }
+
+        .tag-free {
+          background: var(--accent-green-bg);
+          color: var(--accent-green);
+          font-size: 10px;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 4px;
+          text-transform: uppercase;
+        }
+      }
+
+      p {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.4;
+      }
     }
+
+    &:hover {
+      background: var(--bg-card-item-hover);
+      border-color: rgba(16, 185, 129, 0.35);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+
+      .picker-icon-wrap {
+        background: var(--accent-green);
+        color: #fff;
+        transform: scale(1.05);
+      }
+    }
+  }
 }

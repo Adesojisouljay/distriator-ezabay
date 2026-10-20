@@ -1,383 +1,551 @@
 @import '../../mixins.scss';
+
+// Overlay
 .b-s-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  .b-s-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  .b-s-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 30%;
-    height: max-content;
-    display: flex;
-    border-radius: 12px;    
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    background-color: var(--modal-background-color);
-    // background-color: var(--modal-background-color);
-    // & .md{
-    //   background: linear-gradient(127deg, hsla(0, 0%, 100%, 0.16) 17.35%, hsla(0, 0%, 85%, 0.04) 76.2%);
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(4, 7, 14, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 
-    // }
-    @include respond(phone) {
-      width: 95%;
-      // top: calc(60% - 55px);
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
 
-    }
+// Modal Container
+.b-s-modal {
+  position: relative;
+  width: 94%;
+  max-width: 480px;
+  background: linear-gradient(145deg, #101726 0%, #0b101c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.9), 0 0 32px rgba(16, 185, 129, 0.04);
+  transform: scale(0.96) translateY(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible;
+
+  .open & {
+    transform: scale(1) translateY(0);
   }
 
-  .backmodal{
+  @include respond(phone) {
+    padding: 20px 16px;
+    width: 95%;
+  }
+
+  // Header Close Button
+  .close-modal {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    cursor: pointer;
-  }
-
-
-
-  .buysell-container {
-    width: 100%;
-  .spend-wrap{
-    h3{
-      font-size: 18px;
-      @include respond(phone) {
-        font-size: 16px;
-      }
-    }
-    .fiat-bal-wrap{
-      display: flex;align-items: center;
-      gap: 4px;
-      padding: 3px 8px ;
-      margin-top: 5px;
-      border-radius: 12px;
-      background-color: rgba(26, 39, 54, 0.8);
-      width: fit-content;
-      font-size: 12px;
-      span:nth-child(1){
-        color: rgb(212 212 212);
-      }
-    }
-  }
-    .spend-component {
-      
-      display: flex;
-      margin-top: 5px;
-      padding: 7px 20px;
-      background-color: rgb(29, 35, 43);
-      border-radius: 8px;
-      width: 100%;
-      transition: border-color 0.3s ease ;
-      border: 1px solid rgb(42 51 62);
-
-      @include respond(phone) {
-        padding: 7px 20px;
-      }
-      &:focus-within {
-        border-color:  rgb(73 131 230); 
-        border-width: 1.5px;
-      }
-      input {
-        width: 100%;
-        height: 40px;
-        font-size: 16px;
-        background-color: inherit;
-        border: none; 
-        outline: none;
-        color: #fff;
-        @include respond(phone) {
-          height: 30px;
-        }
-      }
-    }
-    .spend-select-wrap {
-      display: flex;
-      align-items: center;
-  
-      img {
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        margin-right: 3px;
-      }
-      span {
-        font-size: 16px;
-        @include respond(phone) {
-          font-size: 14px;
-        }
-      }
-    }
-  
-    .get-wrap {
-      margin-top: 20px;
-      position: relative;
-      h3{
-        font-size: 18px;
-        @include respond(phone) {
-          font-size: 16px;
-        }
-      }
-    }
-    .get-component{
-      display: flex;
-      margin-top: 5px;
-      padding: 7px 20px;
-      background-color: rgb(29 35 43);
-      border-radius: 8px;
-      width: 100%;
-      border: 1px solid rgb(42 51 62);
-      transition: border-color 0.3s ease ;
-      &:focus-within {
-        transition: border-color 0.3s ease ;
-        border-color:  rgb(73 131 230); 
-        border-width: 1.5px;
-      }
-      
-      input {
-        width: 100%;
-        height: 40px;
-        font-size: 16px;
-        background-color: inherit;
-        border: none;
-        outline: none;
-        color: #fff;
-        @include respond(phone) {
-          height: 30px;
-        }
-      }
-    }
-    .get-select-wrap{
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-  
-      img {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-right: 3px;
-      }
-      span {
-        font-size: 16px;
-        @include respond(phone) {
-          font-size: 14px;
-        }
-      }
-    }
-    .buy-sell-btn-wrap{
-      margin-top: 30px;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
     display: flex;
-    justify-content: center;
     align-items: center;
-    .buy-sell-btn{
-    background: linear-gradient(127deg, hsla(0, 0%, 100%, .16) 17.35%, hsla(0, 0%, 85%, .04) 76.2%);
-    color: white;
-    padding: 7px 20px;
-    border: none;
+    justify-content: center;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    }
-    }
-  
-    .fees-review{
-      margin-top: 8px;
-      padding: 10px;
-      border: solid 1px grey;
-      border-radius: 8px;
-      p{
-        font-size: 14px;
-        margin-bottom: 3px;
-      }
-    }
+    transition: all 0.15s ease;
+    z-index: 20;
 
-  .rate-wrap{
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transform: scale(1.05);
+    }
+  }
+
+  .backmodal {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    z-index: 20;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transform: scale(1.05);
+    }
+  }
+}
+
+.buysell-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .modal-title-wrap {
     text-align: center;
-    font-size: 12px;
-    padding-top: 10px;
-  }
-  .crypto-bal-wrap{
-    display: flex;align-items: center;
-    gap: 4px;
-    padding: 3px 8px ;
-    margin-top: 5px;
-    border-radius: 12px;
-    background-color: rgba(26, 39, 54, 0.8);
-    width: fit-content;
-    font-size: 12px;
-    span:nth-child(1){
-      color: rgb(212 212 212);
+    margin-bottom: 4px;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
     }
   }
-  
-  
-  // *******************step====2******************
-  .review-box-wrap{
+
+  // Segmented Buy / Sell Toggle
+  .toggle-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+
+    .buy-sell-btn {
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+      color: var(--text-secondary);
+
+      &:hover:not(.active) {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      &.active {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    button:first-child.active {
+      background: #10b981;
+      color: #000;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+
+    button:last-child.active {
+      background: #f43f5e;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.35);
+    }
+  }
+
+  .warning {
+    color: #f59e0b;
+    font-size: 13px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .buy-sell-parent-wrap {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0px;
-    margin-top: 30px;
-    .box-left{
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  // Input Card (Fiat & Crypto)
+  .spend-wrap, .get-wrap {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 14px 16px;
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.08);
+    }
+
+    .input-card-top {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      padding: 14px;
-      border-radius: 12px;
-      border: 2px solid rgb(74, 96, 121);
-      background-color: rgb(29 35 43 );
-      border-color: rgb(42 51 62);
-      width: 250px;
-      @include respond(phone) {
-        align-items: flex-start;
-      }
-      span{
+      margin-bottom: 8px;
+
+      h3 {
         font-size: 12px;
-        margin-bottom: 4px;
-        @include respond(phone) {
-          margin-bottom: 7px;
-        }
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
       }
-      .review-coin-wrap{
+
+      .bal-display {
         display: flex;
         align-items: center;
-        margin-bottom: 4px;
         gap: 6px;
-        @include respond(phone) {
-          margin-bottom: 7px;
-        }
-        img{
-          width: 25px;
-          height: 25px;
-          border-radius: 50%;
-        }
-        span{
-          font-size: 24px;
-          margin: 0px;
-          @include respond(phone) {
-            font-size: 18px;
-          }
-        }
-      }
-      
-    }
-    .arrow-right-wrap{
-      margin: 0px 12px;
-      position: relative;
-      @include respond(phone) {
-        margin: 0px 30px;
-      }
-      svg{
-        @include respond(phone) {
-          width: 1px;
-        }
-      }
-      .exchange-iconwrap{
-        position: absolute;
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%);
-        width:55px;
-        height: 55px;
-        border: 1px solid rgb(74, 96, 121);
-        border-radius: 50%;
-        background-color: var(--modal-background-color) ;
-        display: flex;
-        justify-content: center;  
-        align-items: center;   
-        @include respond(phone) {
-          width:35px;
-          height: 35px;
-        }
-        .exc-icon{
-          @include respond(phone) {
-            width:35px;
+        font-size: 12px;
+        color: var(--text-muted);
 
+        span.bal-val {
+          color: var(--text-secondary);
+          font-weight: 600;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .btn-max {
+          color: var(--accent-green);
+          font-weight: 700;
+          font-size: 11px;
+          cursor: pointer;
+          background: rgba(16, 185, 129, 0.12);
+          padding: 1px 6px;
+          border-radius: 4px;
+          transition: all 0.15s;
+
+          &:hover {
+            background: rgba(16, 185, 129, 0.25);
           }
         }
       }
-  
     }
-    .rate-wrap{
-      margin: 8px 0px;
-      font-size: 16px;
-  
-   }
-   
-  }
-  .fees-review{
-    margin-top: 8px;
-    padding: 10px;
-    border: solid 1px grey;
-    border-radius: 8px;
-    p{
-      font-size: 14px;
-      margin-bottom: 3px;
-    }
-    .fees-rap{
+
+    .spend-component, .get-component {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 5px;
-      span{
-        font-size: 14px;
-        @include respond(phone) {
-          font-size: 12px;
+      gap: 12px;
+      margin-top: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+
+      input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        width: 100%;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.2);
+          font-size: 16px;
+          font-weight: 400;
         }
       }
-  
     }
-  }
-  .buy-btn-wrap{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px 0px;
-    button{
-      padding: 10px 40px;
+
+    .spend-select-wrap, .get-select-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
       border-radius: 10px;
-      margin: 0 auto;
-      color: #fff;
-      font-size: 18px;
-      background-color: rgb(23, 57, 102);
       cursor: pointer;
-      @include respond(phone) {
+      transition: all 0.15s;
+      user-select: none;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+
+      span {
         font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+      }
+
+      svg {
+        color: var(--text-muted);
       }
     }
   }
+
+  .get-wrap {
+    position: relative;
   }
 
+  // Rate Chip (Center)
+  .rate-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    width: fit-content;
+    margin: -4px auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+
+    .rate-icon {
+      color: var(--accent-green);
+    }
+  }
+
+  // Breakdown Card
+  .fees-review {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .fees-rap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+
+      span:first-child {
+        color: var(--text-muted);
+      }
+
+      span:last-child {
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      &.total-row {
+        padding-top: 8px;
+        margin-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+        span:first-child {
+          color: var(--text-primary);
+          font-weight: 700;
+        }
+
+        span:last-child {
+          color: var(--accent-green);
+          font-weight: 800;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  // Action Button
+  .buy-sell-btn-wrap {
+    margin-top: 6px;
+
+    .buy-sell-btn-main {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #000;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+  }
+
+  // Review Step (Step 2)
+  .review-buy-sell {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .review-box-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+
+      .box-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .review-label {
+          font-size: 11px;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .review-coin-wrap {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          img {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            object-fit: contain;
+          }
+
+          span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+          }
+        }
+
+        .sub-val {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-variant-numeric: tabular-nums;
+        }
+      }
+
+      .exchange-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        color: var(--accent-green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .buy-btn-wrap {
+      button {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #000;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  // Success Step (Step 3)
   .succe {
     text-align: center;
-    padding: 30px 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    padding: 32px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .success-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 320px;
+    }
+
+    .btn-done {
+      width: 100%;
+      max-width: 200px;
+      padding: 12px;
+      background: var(--accent-green);
+      color: #000;
+      border-radius: 10px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+
+      &:hover {
+        background: var(--accent-green-hover);
+        transform: translateY(-1px);
+      }
+    }
   }
-  .grey{
-    background-color: #aaa;
-  }
-  
+}

@@ -1,230 +1,292 @@
 @import "../../mixins.scss";
-.fadded-container{
-  position: relative;
-  z-index: 10;
-  // background-color: rgba(0, 0, 0, .6);
-  background-color: var(--modal-background-color);
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
   width: 100%;
   height: 100%;
+  background: var(--modal-overlay, rgba(4, 7, 14, 0.8));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    // display: none;
-    // background: linear-gradient(
-    // 127deg,
-    // hsla(0, 0%, 100%, 0.16) 17.35%,
-    // hsla(0, 0%, 85%, 0.04) 76.2%
-    // );
-    accent-color: red;
-    justify-content: center;
-    align-items: center;
-    @include respond(phone) {
-      align-items: end;
-    }
-  }
-  
-  .modal {
-    width: 35%;
-    height: max-content;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(
-    127deg,
-    hsla(0, 0%, 100%, 0.16) 17.35%,
-    hsla(0, 0%, 85%, 0.04) 76.2%
-  );
-    padding: 20px;
-    border-radius: 12px;
-    position: relative;
-    @include respond(phone) {
-      width: 95%;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
+
+.modal {
+  position: relative;
+  width: 94%;
+  max-width: 480px;
+  background: var(--modal-gradient, linear-gradient(145deg, #101726 0%, #0b101c 100%));
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg), 0 0 32px rgba(16, 185, 129, 0.04);
+  transform: scale(0.96) translateY(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .open & {
+    transform: scale(1) translateY(0);
   }
 
-  .d-main{
-    width: 100%;
-    display: flex;
-    // flex-direction: column;
-    justify-content: center;
+  @include respond(phone) {
+    padding: 20px 16px;
+    width: 95%;
   }
 
-  .close-btn {
+  // Header Close Button
+  .close-modal, .close-btn {
     position: absolute;
     top: 20px;
     right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 18px;
+    transition: all 0.15s ease;
+    z-index: 20;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transform: scale(1.05);
+    }
   }
 
-  .d-header{
-    margin-bottom: 20px;
-    @include respond(phone) {
-      font-size: 16px;
+  .d-header, .w-header {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .d-main {
+    width: 100%;
+  }
+
+  // Coin Selector Card
+  .d-coin-select-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--bg-card-item);
+    border: 1px solid var(--border-item);
+    border-radius: 12px;
+    position: relative;
+
+    .label-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: capitalize;
     }
 
-  }
-  
-  .generate-address-btn {
-    padding: 0px 40px;
-    background-color: transparent;
-    background-image: linear-gradient(127deg, hsla(0, 0%, 100%, .16) 17.35%, hsla(0, 0%, 85%, .04) 76.2%);
-    color: white;
-    border: none;
-    border-radius: .5rem;
-    cursor: pointer;
-    margin-bottom: 10px;
-    border-color: rgb(56 67 80 );
-    border-width: 1px;
-    height: 40px;
-    font-size: 15px;
+    .d-currency-select-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--bg-pill);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.15s;
 
+      &:hover {
+        background: var(--bg-pill-hover);
+        border-color: var(--border-light);
+      }
+
+      .d-coin-wrap {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+
+      .d-picker-currency {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-primary);
+        text-transform: uppercase;
+      }
+
+      svg {
+        color: var(--text-muted);
+      }
+    }
   }
-  
+
+  // QR Code Frame
+  .qr-code-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4px auto;
+
+    .qr-frame {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md), 0 0 24px rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+
+      svg {
+        width: 140px !important;
+        height: 140px !important;
+      }
+    }
+  }
+
+  // Address and Memo Info Boxes
+  .deposit-address-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
   .deposit-address {
     display: flex;
     flex-direction: column;
-    // align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 6px;
     width: 100%;
-    span{
-      font-size: 14px;
-      @include respond(phone) {
-        font-size: 14px;
-      }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
-    .wrap{
+
+    .wrap {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      width: 100%;
-      background-color: rgb(29, 35, 43);
-      padding: 15px;
-      border-radius: 7px;
-      span{
-        @include respond(phone) {
-          font-size: 12px;
+      gap: 12px;
+      background: var(--bg-card-item);
+      border: 1px solid var(--border-item);
+      border-radius: 10px;
+      padding: 11px 14px;
+      transition: all 0.15s;
+
+      &:hover {
+        background: var(--bg-card-item-hover);
+        border-color: rgba(16, 185, 129, 0.35);
+      }
+
+      .val-text {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 13px;
+        color: var(--text-primary);
+        word-break: break-all;
+        line-height: 1.4;
+      }
+
+      .btn-copy-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-green-bg);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        color: var(--accent-green);
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+
+        &:hover {
+          background: var(--accent-green);
+          color: #fff;
+          transform: translateY(-1px);
         }
       }
     }
   }
 
-  .deposit-address-info-el {
-    background-color: rgb(29, 35, 43);
-    padding: 15px;
+  // Warning Callout Box
+  .memo-alert-box {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    cursor: pointer;
-  }
-
-  .address-wrap{
-    display: flex;
-    gap: 3px;
-  }
-  .countdown {
-    margin-bottom: 10px;
-  }
-  
-  .deposit-btn {
-    padding: 15px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .open {
-    display: flex;
-  }
-  .warning{
-    text-align: center;
-    @include respond(phone) {
-      font-size: 14px;
-    }
-  }
-  .deposit-asset{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
-  }
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
 
-  .d-coin-wrap{
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-  }
-
-  .d-coin-select-wrapper{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    position: relative;
-    margin-bottom: 10px;
-    border-radius: 7px;
-    border: 1px solid rgba(49 54 61 );
-    padding: 3px 10px;
-    background: linear-gradient(127deg, hsla(0, 0%, 100%, .16) 17.35%, hsla(0, 0%, 85%, .04) 76.2%);
-  }
-
-  .d-currency-select-wrap{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: space-around;
-    padding: 7px;
-    // width: 50%;
-    // margin-bottom: 1px;
-    cursor: pointer;
-    // border: 1px solid rgba(0, 0, 0, 0.8);
-    border-radius: 12px;
-    position: relative;
-    background-color: rgb(29 35 43 )
-  }
-
-  .d-picker-currency{
-    font-size: 18px;
-    @include respond(phone) {
-      font-size: 14px;
+    .alert-icon {
+      color: #f59e0b;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
-  }
-  .note-wrap{
-    width: 100%;
-    padding: 7px;
-    border-radius: 7px;
-    background-color: rgba(21, 31, 43, .4);
-    & .note-bg{
-      background-color: rgb(2 8 15 )
-    }
-    header{
-      font-size: 16px;
-      margin-bottom: 2px;
-      @include respond(phone) {
-        font-size: 14px;
+
+    p {
+      font-size: 12px;
+      color: #d97706;
+      line-height: 1.4;
+      margin: 0;
+
+      [data-theme="dark"] & {
+        color: #fbbf24;
       }
     }
+  }
+
+  // Notes Box
+  .note-wrap {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+
+    header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+
     ul {
       list-style-type: disc;
-      padding-left: 20px; /* Adds space for the dots */
-    }
-    
-    ul li {
-      margin-bottom: 4px; 
-      font-size: 14px;
-      @include respond(phone) {
+      padding-left: 18px;
+      margin: 0;
+
+      li {
         font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 2px;
       }
-      // font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-      // font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     }
   }
+}

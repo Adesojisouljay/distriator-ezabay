@@ -1,169 +1,165 @@
 @import '../../mixins.scss';
+
 .listed-tokens-container {
-  
+  width: 100%;
+
   .listed-tokens-title {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      @include respond(phone) {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-      
+    display: none; // Already headed by the dashboard tabs
   }
 
   .listed-token-search-input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
+    display: none;
+  }
+
+  .listed-tokens-loading, .listed-tokens-error {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 14px;
   }
 
   .listed-token-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 4px;
+
+    @include respond(desktop) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include respond(tab) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @include respond(phone) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  .listed-token-container {
+    width: 100%;
+
+    .token-box {
+      background: var(--bg-card-item);
+      border: 1px solid var(--border-item);
+      border-radius: var(--radius-md);
+      padding: 16px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      max-height: 500px; 
-      overflow-y: auto;
-      padding-bottom: 50px;
-      @include respond(phone) {
-        gap: 10px;
-      }
-      
-  }
+      flex-direction: column;
+      gap: 12px;
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
 
-  .listed-token-container {
-      flex: 1 1 calc(25% - 20px);  
-      box-sizing: border-box;
-      max-height: 300px;
-      overflow-y: hidden;
-      padding-right: 10px; 
-      @include respond(phone) {
-        flex: 1 1 calc(100% - 20px);  
-      }
-      @include respond(tab) {
-        flex: 1 1 calc(50% - 20px);  
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.04), transparent 60%);
+        pointer-events: none;
       }
 
-      .token-box {
-          background-color: rgba(21, 31, 43, .4);
-          border-radius: 8px;
-          padding: 15px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease;
-          @include respond(phone) {
-            padding: 10px;
+      &:hover {
+        background: var(--bg-card-item-hover);
+        border-color: var(--border-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+
+        .token-name-link {
+          color: var(--accent-green);
+        }
+
+        .arrow-icon {
+          color: var(--accent-green);
+          transform: translateX(3px);
+        }
+      }
+
+      .token-content-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .token-image-wrap {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .token-image {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: contain;
+        }
+
+        .arrow-icon {
+          color: var(--text-muted);
+          transition: all var(--transition-fast);
+        }
+
+        .token-name-link {
+          font-size: 14px;
+          font-weight: 700;
+          color: var(--text-primary);
+          text-decoration: none;
+          max-width: 130px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          transition: color var(--transition-fast);
+        }
+
+        .token-price {
+          font-size: 15px;
+          font-weight: 700;
+          color: var(--text-primary);
+          font-variant-numeric: tabular-nums;
+          letter-spacing: -0.3px;
+        }
+
+        .token-symbol {
+          font-size: 11px;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.5px;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
+        .token-change {
+          font-size: 12px;
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+          padding: 3px 8px;
+          border-radius: var(--radius-full);
+          display: inline-flex;
+          align-items: center;
+        }
+
+        &.positive-change {
+          .token-change {
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
           }
-          
-          
-          &:hover {
-              transform: translateY(-5px);
+        }
+
+        &.negative-change {
+          .token-change {
+            background: var(--accent-red-bg);
+            color: var(--accent-red);
           }
-
-          .token-content-wrap {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 7px;
-
-              &:last-child {
-                  margin-bottom: 0;
-              }
-
-              .token-image {
-                  width: 35px;
-                  height: 35px;
-                  margin-right: 10px;
-                  border-radius: 50%;
-                  @include respond(phone) {
-                    width: 30px;
-                    height: 30px;
-                  }
-              }
-
-              .token-name-link {
-                  font-weight: bold;
-                  text-decoration: none;
-                  color: #fff;
-                  font-size: 18px;
-                  @include respond(phone) {
-                    font-size: 14px;
-                  }
-              }
-
-              .buy-button {
-                  padding: 8px 16px;
-                  background-color: #28a745;
-                  color: #fff;
-                  border: none;
-                  border-radius: 12px;
-                  cursor: pointer;
-                  font-size: 12px;
-                  @include respond(phone) {
-                    padding: 6px 16px;
-                  }
-
-                  &:hover {
-                      background-color: #218838;
-                  }
-              }
-
-              .token-price {
-                  font-size: 18px;
-                  font-weight: bold;
-                  @include respond(phone) {
-                    font-size: 14px;
-                  }
-              }
-
-              .token-symbol {
-                  font-size: 16px;
-                  font-weight: 600;
-                  text-transform: uppercase;
-                  @include respond(phone) {
-                    font-size: 12.89px;
-                  }
-              }
-
-              .token-change {
-                  font-size: 14px;
-                  font-weight: bold;
-
-                  &.positive-change {
-                      color: #28a745;
-                  }
-
-                  &.negative-change {
-                      color: #dc3545;
-                  }
-              }
-          }
+        }
       }
+    }
   }
 }
-
-.positive-change {
-  color: #28a745;
-}
-
-.negative-change {
-  color: #dc3545;
-}
-
-
-
-@media (max-width: 768px) {
-  .listed-token-container {
-      flex: 1 1 calc(50% - 20px);  
-  }
-}
-
-@media (max-width: 480px) {
-  .listed-token-container {
-      flex: 1 1 100%;  
-  }
-}
-

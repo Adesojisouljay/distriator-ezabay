@@ -38,8 +38,8 @@ import { CryptoNews } from "./pages/CryptoNews";
 import { SingleNewsPage } from "./pages/SingleNewsPage";
 import { Profile } from "./pages/ProfilePage";
 import { HiveOnboard } from "./components/hive-onboard/HiveOnboard";
-import { SpendHbd } from "./components/spend-hbd/SpendHbd";
 import { SingleCommunityPost } from "./components/single-post/singleCommunityPost";
+import { TransactionsPage } from "./pages/TransactionsPage";
 
 function App() {
   const user = useSelector((state) => state.ekzaUser);
@@ -71,7 +71,6 @@ function App() {
   return (
     <div className="app">
       <NavBar/>
-      <RightNav />
       <div className='app-container'>
       {!tokenValid && isProtectedRoute && <InvalidTokenModal /> }
         <Routes>
@@ -80,8 +79,9 @@ function App() {
           <Route path="/register" element={<Register/>}/>
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/wallet" element={<WalletPage/>}/>
+            <Route path="/transactions" element={<TransactionsPage/>}/>
             <Route path="/hive-onboard" element={<HiveOnboard/>}/>
-            <Route path="/spend-hbd" element={<SpendHbd/>}/>
             <Route path="/post/:author/:permlink" element={<SingleCommunityPost/>}/>
             {/* <Route path="/mining" element={<Miner/>}/> */}
             {/* COMMENT ALL OUT FOR TESTING SAKE */}

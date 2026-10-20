@@ -18,53 +18,131 @@
   display: block;
   
 }
-:root{
-  --tg-primary-color: #44a08d;
-  --tg-green: #093637;
-  --bg-light:#0f101e;
-  --app-foreground-color: 255,255,255;
-  --app-background-color: 2,8,15;
-  --modal-background-color: #151f2b;
-  --header-background-color: #02080f;
-  --header-border-color: hsla(0,0%,90%,.1);
-  --header-height: 64px;
-  --light--1:linear-gradient(127deg, hsla(0, 0%, 100%, .16) 17.35%, hsla(0, 0%, 85%, .04) 76.2%);
+:root, [data-theme="dark"] {
+  --bg-canvas: #090d16;
+  --bg-surface: #101726;
+  --bg-surface-elevated: #162033;
+  --bg-card: rgba(18, 26, 43, 0.75);
+  --bg-card-gradient: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(15, 23, 42, 0.75) 100%);
+  --bg-card-item: linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.012) 100%);
+  --bg-card-item-hover: rgba(255, 255, 255, 0.055);
+  --bg-input: rgba(255, 255, 255, 0.04);
+  --bg-input-focus: rgba(255, 255, 255, 0.07);
+  --bg-pill: rgba(255, 255, 255, 0.04);
+  --bg-pill-hover: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.14);
+  --border-item: rgba(255, 255, 255, 0.075);
+  --border-focus: #10b981;
+  --nav-bg: rgba(9, 13, 22, 0.85);
+  --sidebar-bg: rgba(13, 18, 30, 0.96);
+  --modal-bg: #101726;
+  --modal-gradient: linear-gradient(145deg, #101726 0%, #0b101c 100%);
+  --modal-overlay: rgba(4, 7, 14, 0.8);
+  --dropdown-bg: #111827;
+  --dropdown-gradient: linear-gradient(145deg, #131c2e 0%, #0d1424 100%);
+  --dropdown-hover: rgba(255, 255, 255, 0.06);
+  --accent-green: #10b981;
+  --accent-green-bg: rgba(16, 185, 129, 0.12);
+  --accent-green-hover: #059669;
+  --accent-red: #f43f5e;
+  --accent-red-bg: rgba(244, 63, 94, 0.12);
+  --accent-red-hover: #e11d48;
+  --accent-cyan: #06b6d4;
+  --accent-brand: #3b82f6;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --header-height: 70px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --light--1: linear-gradient(127deg, rgba(255, 255, 255, 0.08) 17.35%, rgba(255, 255, 255, 0.02) 76.2%);
+  --body-bg-radial-1: rgba(16, 185, 129, 0.04);
+  --body-bg-radial-2: rgba(59, 130, 246, 0.04);
+}
+
+[data-theme="light"] {
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --bg-card-item: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --bg-card-item-hover: #f1f5f9;
+  --bg-input: #f1f5f9;
+  --bg-input-focus: #e2e8f0;
+  --bg-pill: rgba(0, 0, 0, 0.04);
+  --bg-pill-hover: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.14);
+  --border-item: rgba(0, 0, 0, 0.08);
+  --border-focus: #10b981;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --sidebar-bg: #ffffff;
+  --modal-bg: #ffffff;
+  --modal-gradient: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --modal-overlay: rgba(15, 23, 42, 0.55);
+  --dropdown-bg: #ffffff;
+  --dropdown-gradient: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --dropdown-hover: #f1f5f9;
+  --accent-green: #059669;
+  --accent-green-bg: rgba(16, 185, 129, 0.12);
+  --accent-green-hover: #047857;
+  --accent-red: #e11d48;
+  --accent-red-bg: rgba(225, 29, 72, 0.1);
+  --accent-red-hover: #be123c;
+  --accent-cyan: #0891b2;
+  --accent-brand: #2563eb;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+  --light--1: linear-gradient(127deg, rgba(0, 0, 0, 0.04) 17.35%, rgba(0, 0, 0, 0.01) 76.2%);
+  --body-bg-radial-1: rgba(16, 185, 129, 0.06);
+  --body-bg-radial-2: rgba(37, 99, 235, 0.05);
 }
 
 body {
-  // font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  // 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  // sans-serif;
-  // -webkit-font-smoothing: antialiased;
-  // -moz-osx-font-smoothing: grayscale;
-  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  // font-family: 'Roboto', sans-serif;
-  // font-family: 'Inter', sans-serif;
-  color: whitesmoke;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-primary);
   height: 100vh;
-  background-color:  #010314;
+  background-color: var(--bg-canvas);
+  background-image: 
+    radial-gradient(circle at 10% 20%, var(--body-bg-radial-1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, var(--body-bg-radial-2) 0%, transparent 40%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 .copy-icon{
   cursor: pointer;
+  transition: opacity var(--transition-fast);
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .app-container{
   display: flex;
   flex: 1;
   overflow-y: auto;
-  height: calc(100vh - 80px); 
+  min-height: calc(100vh - var(--header-height));
   scroll-behavior: smooth;
-  /* background-color:  #010314; */
-
-
-
-  background-image: url(./assets/black-background.png);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  // height: 100vh;
-  // width: 100%;
+  background-color: transparent;
 }
 
 .home-wrap{
@@ -279,4 +357,118 @@ a{
   50% {
     opacity: 0;
   }
+}
+
+// =============================================================
+// GLOBAL MODAL SYSTEM (Standard Crypto Exchange Style)
+// =============================================================
+.modal-overlay,
+.b-s-modal-overlay,
+.f-t-modal-overlay,
+.fadded-container {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(4, 7, 14, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 10000 !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease !important;
+
+  &.open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+// Suppress any legacy duplicate backdrop divs inside overlays
+.modal-overlay > .modal-overlay,
+.b-s-modal-overlay > .b-s-modal-overlay,
+.f-t-modal-overlay > .f-t-modal-overlay,
+.fadded-container > .modal-overlay,
+.fadded-container > .f-t-modal-overlay {
+  display: none !important;
+}
+
+.modal,
+.b-s-modal,
+.f-t-modal {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: 94% !important;
+  max-width: 520px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  background: linear-gradient(145deg, #101726 0%, #0b101c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  padding: 28px !important;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.9), 0 0 32px rgba(16, 185, 129, 0.04) !important;
+  color: var(--text-primary);
+  animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+  @include respond(phone) {
+    padding: 20px 16px !important;
+    width: 95% !important;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Universal Modern Close Button (Eliminates old red X circle globally!)
+.close-modal,
+.close-btn {
+  position: absolute !important;
+  top: 18px !important;
+  right: 18px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-muted) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  transition: all 0.15s ease !important;
+  z-index: 20 !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #fff !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+// Remove browser default up/down spinner arrows from number inputs globally
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
 }

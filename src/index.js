@@ -7,6 +7,7 @@ import { store, persistor } from './redux/store';
 import App from './App';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ThemeProvider } from './context/ThemeContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,10 +15,12 @@ root.render(
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
-          <ToastContainer/>
+          <ThemeProvider>
+            <App />
+            <ToastContainer />
+          </ThemeProvider>
         </PersistGate>
-      </Provider>,
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>
 );

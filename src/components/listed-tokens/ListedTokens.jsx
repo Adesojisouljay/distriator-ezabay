@@ -72,7 +72,7 @@ export const ListedTokens = ( {searchQuery, setSearchQuery, openBuySellModal}) =
                             <div className="token-box">
                                 <div className="token-content-wrap">
                                     <img src={coin.image} alt={coin.name} className="token-image" />
-                                    <MdKeyboardArrowRight size={20} />
+                                    <MdKeyboardArrowRight size={20} className="arrow-icon" />
                                 </div>
                                 <div className="token-content-wrap">
                                 <Link to={`/coin/${coin.id}`} className="token-name-link">

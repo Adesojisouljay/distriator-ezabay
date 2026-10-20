@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { processHiveWithdrawal, requestToken, processCryptoWithdrawal, getTransactionFees } from '../../api/ekzat';
 import { RiArrowDownSFill } from 'react-icons/ri';
+import { IoClose } from 'react-icons/io5';
 import { Dropdown } from '../dropdown/Dropdown';
 import './withdraw-modal.scss';
 import Spinner from '../spinner/Spinner';
@@ -103,12 +104,12 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
 };
 
   return (
-    <div className={`fadded-container modal-overlay ${isOpen ? 'open' : ''}`} >
-    <div className={`modal-overlay  ${isOpen ? 'open' : ''}`}  onClick={onClose}> </div>
-    {/* <div className={`modal-overlay ${isOpen ? 'open' : ''}`}> */}
-      <div className="modal testing">
-        <span className="close-modal" onClick={onClose}>X</span>
-        <h2 className='w-header'>Send</h2>
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
+      <div className="modal testing" onClick={(e) => e.stopPropagation()}>
+        <button className="close-modal" onClick={onClose} title="Close">
+          <IoClose size={18} />
+        </button>
+        <h2 className='w-header'>Send On-Chain</h2>
         {message && <p className='warning'>{message}</p>}
         {step === 1 && <div className="w-input-group">
 
@@ -130,21 +131,21 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
             </div> */}
 
             <div className='d-coin-select-wrapper'>
-            <span>{selectedAsset?.currency}</span>
-            <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
-              <img className="d-coin-wrap" src={selectedAsset?.image} alt="" />
-              <span className='d-picker-currency'>{selectedAsset?.currency}</span>
-              <RiArrowDownSFill  size={24}/>
+              <span className="label-tag">Select Asset</span>
+              <div className="d-currency-select-wrap" onClick={handleOpencoinList}>
+                {selectedAsset?.image && <img className="d-coin-wrap" src={selectedAsset?.image} alt="" />}
+                <span className='d-picker-currency'>{selectedAsset?.symbol || selectedAsset?.currency}</span>
+                <RiArrowDownSFill size={20}/>
+              </div>
               <Dropdown 
-              user={user}
-              setCurrency={setSelectedAsset} 
-              handleOpencoinList={handleOpencoinList} 
-              openList={openList}
-              displaySearch={displaySearch} />
-
+                user={user}
+                setCurrency={setSelectedAsset} 
+                handleOpencoinList={handleOpencoinList} 
+                openList={openList}
+                displaySearch={displaySearch}
+                selectedCurrency={selectedAsset}
+              />
             </div>
-
-          </div>
           </div>
 
           {selectedAsset.depositAddress ? <>
@@ -170,8 +171,17 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
               className='w-input'
               type="number"
               id="withdraw-amount"
+              min="0"
+              step="any"
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                let val = e.target.value.replace(/[^0-9.]/g, '');
+                if ((val.match(/\./g) || []).length > 1) val = val.slice(0, -1);
+                setAmount(val);
+              }}
               placeholder="Enter amount"
             />
             <div className="max-wrap">
