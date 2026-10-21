@@ -1,5 +1,6 @@
 import { Coins } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const Footer = () => {
   return (
@@ -10,10 +11,19 @@ const Footer = () => {
             Ezabay
           </h3>
           <p className="footer-description">
-            We offer seamless transactions, minimal fees, and access to SpendHBD and Distraitor for payments and rewards.
+            We offer seamless transactions, minimal fees, and access to SpendHBD and Distriator for payments and rewards.
           </p>
           <div className="footer-cta">
             <Link to="/login" className="btn-primary">Get Started</Link>
+            <a 
+              href="https://chat.whatsapp.com/L6xOf8KnRupCWaNpmzvYuJ?mode=gi_t" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-whatsapp"
+            >
+              <FaWhatsapp size={18} />
+              <span>Join WhatsApp Group</span>
+            </a>
           </div>
         </div>
         <div className="footer-bottom">

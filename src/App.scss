@@ -140,13 +140,20 @@ body {
   display: flex;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
   min-height: calc(100vh - var(--header-height));
   scroll-behavior: smooth;
   background-color: transparent;
+  box-sizing: border-box;
 }
 
 .home-wrap{
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 a{

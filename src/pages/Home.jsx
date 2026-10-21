@@ -20,6 +20,7 @@ import SecuritySection from '../components/Home/SecuritySection';
 import TestimonialsSection from '../components/Home/TestimonialsSection';
 import NewsletterSection from '../components/Home/NewsletterSection';
 import StatsSection from '../components/Home/StatsSection';
+import { FaWhatsapp } from 'react-icons/fa';
 import "../components/Home/style.css"
 export const Home = () => {
   const navigate = useNavigate()
@@ -57,19 +58,6 @@ export const Home = () => {
     const elements = document.querySelectorAll('.scroll-reveal');
     elements.forEach(el => observer.observe(el));
 
-    // FAQ toggle functionality
-    const faqItems = document.querySelectorAll('.faq-item');
-    faqItems.forEach(item => {
-      const question = item.querySelector('.faq-question');
-      question.addEventListener('click', () => {
-        const isActive = item.classList.contains('active');
-        faqItems.forEach(otherItem => otherItem.classList.remove('active'));
-        if (!isActive) {
-          item.classList.add('active');
-        }
-      });
-    });
-
     return () => {
       elements.forEach(el => observer.unobserve(el));
     };
@@ -96,6 +84,18 @@ export const Home = () => {
       <FAQSection />
       <ContactSection />
       <Footer />
+
+      <a 
+        href="https://chat.whatsapp.com/L6xOf8KnRupCWaNpmzvYuJ?mode=gi_t"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-whatsapp-btn"
+        aria-label="Join our WhatsApp Community"
+        title="Join our WhatsApp Community"
+      >
+        <FaWhatsapp size={22} className="whatsapp-float-icon" />
+        <span className="floating-whatsapp-text">Join WhatsApp</span>
+      </a>
     </div>
 
 

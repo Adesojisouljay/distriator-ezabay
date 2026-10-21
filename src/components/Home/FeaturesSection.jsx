@@ -1,46 +1,78 @@
 import React from 'react';
-import { ShieldCheck, Zap, RefreshCw, BarChart3, Coins, Wallet, TrendingUp, ArrowLeftRight } from 'lucide-react';
+import { 
+  ArrowLeftRight, 
+  ShieldCheck, 
+  Zap, 
+  Coins, 
+  TrendingUp, 
+  KeyRound 
+} from 'lucide-react';
 
 const FeaturesSection = () => {
   const features = [
     {
       icon: <ArrowLeftRight className="feature-icon-svg" />,
-      title: "Buy HIVE & HBD",
-      description: "Quick and secure way to acquire HIVE and HBD with multiple payment options."
+      title: "Direct Fiat-to-Crypto Rails",
+      description: "Quickly convert Nigerian Naira and stablecoins into HIVE & HBD via automated bank transfers.",
+      tag: "Instant Payouts"
     },
     {
-      icon: <ShieldCheck className="feature-icon-svg" />,
-      title: "Secure Transactions",
-      description: "Our platform prioritizes security, ensuring your HIVE and HBD transactions are safe and protected."
+      icon: <KeyRound className="feature-icon-svg" />,
+      title: "100% Non-Custodial",
+      description: "Your keys, your funds. Seamlessly connect Hive Keychain without handing custody to any third party.",
+      tag: "True Ownership"
+    },
+    {
+      icon: <Zap className="feature-icon-svg" />,
+      title: "Zero Network Gas Fees",
+      description: "Experience the speed of the Hive blockchain with zero network gas fees and sub-3-second block finality.",
+      tag: "Free Transfers"
     },
     {
       icon: <Coins className="feature-icon-svg" />,
-      title: "Low Fees",
-      description: "Enjoy trading HIVE and HBD with minimal fees. Our platform ensures transparent pricing."
+      title: "Transparent, Minimal Fees",
+      description: "Enjoy ultra-tight spreads and transparent low fees with zero hidden markups or predatory deductions.",
+      tag: "Low Spread"
     },
     {
       icon: <TrendingUp className="feature-icon-svg" />,
-      title: "Spend & Earn",
-      description: "Use HIVE and HBD on platforms like SpendHBD and Distraitor for payments and rewards."
+      title: "Spend & Earn Cashbacks",
+      description: "Spend your HBD on platforms like SpendHBD & Distriator to earn up to 55% cashback rewards.",
+      tag: "Real Utility"
+    },
+    {
+      icon: <ShieldCheck className="feature-icon-svg" />,
+      title: "Institutional-Grade Safety",
+      description: "Enterprise protection protocols, strict encryption, 2FA, and real-time fraud monitoring on every swap.",
+      tag: "Bank-Grade"
     }
   ];
 
   return (
-    <section id="features" className="section features">
+    <section id="features" className="section features modern-features-section">
       <div className="container">
         <div className="section-header scroll-reveal">
-          <h2 className="section-title">Why Choose Ezabay?</h2>
-          <p className="section-subtitle">The Gateway to Seamless Spending & Rewards</p>
+          <div className="section-badge-pill">
+            <span>Enterprise Architecture</span>
+          </div>
+          <h2 className="section-title">Why Web3 Traders Choose Ezabay</h2>
+          <p className="section-subtitle">
+            The bridge between traditional banking and the decentralized Hive economy — built for speed, safety, and everyday spending.
+          </p>
         </div>
+
         <div className="features-grid">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="feature-card glass glass-hover scroll-reveal"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="feature-card glass scroll-reveal"
+              style={{ animationDelay: `${index * 0.08}s` }}
             >
-              <div className="feature-icon-wrapper">
-                {feature.icon}
+              <div className="feature-card-top">
+                <div className="feature-icon-wrapper">
+                  {feature.icon}
+                </div>
+                <span className="feature-tag-badge">{feature.tag}</span>
               </div>
               <h3 className="feature-title">{feature.title}</h3>
               <p className="feature-description">{feature.description}</p>
