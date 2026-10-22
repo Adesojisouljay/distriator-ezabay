@@ -185,36 +185,49 @@
   color: #666;
 }
 
-.google-wrap{
-  padding: 5px 20px;
-  border-radius: 12px;
+.keychain-login-btn {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
-  border-radius: 0.75rem;
-  border: 1px solid rgb(43, 46, 52);
-  background-image: linear-gradient(170deg, #2b2f34, #0b1016);
-  .google-svg-wrap{
-    width: 30px;
-  }
-  span{
-    font-size: 16px;
-    @include respond(phone) {
-      font-size: 13px;
-    }
-  }
-  .coming-soon {
-    font-size: .478rem; 
-    padding: 2px 4px;
-    border-radius: 5px;
-    position: relative;
-    top: -5px; 
-    color: rgb(89 121 158 ); 
-    border: solid 1px rgb(89 121 158 ) ;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(227, 19, 55, 0.35);
+  background: linear-gradient(170deg, rgba(35, 41, 54, 0.95), rgba(16, 21, 30, 0.98));
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+
+  &:hover {
+    background: linear-gradient(170deg, rgba(45, 52, 68, 0.98), rgba(20, 26, 38, 1));
+    border-color: rgba(227, 19, 55, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(227, 19, 55, 0.2);
   }
 
+  &:active {
+    transform: translateY(0);
+  }
+
+  .hive-btn-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  span {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+
+    @include respond(phone) {
+      font-size: 13.5px;
+    }
+  }
 }
+
 .reg-link{
   margin-top: 7px;
   span{

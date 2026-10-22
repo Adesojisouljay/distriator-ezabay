@@ -1,0 +1,290 @@
+@import "../../mixins.scss";
+
+.keychain-login-modal {
+  position: relative;
+  max-width: 460px !important;
+  padding: 32px 28px !important;
+  background: linear-gradient(150deg, #131b2e 0%, #0c111d 100%) !important;
+  border: 1px solid rgba(227, 19, 55, 0.25) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(227, 19, 55, 0.1) !important;
+  color: #fff;
+
+  @include respond(phone) {
+    padding: 24px 18px !important;
+    max-width: 92% !important;
+  }
+
+  .keychain-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  .keychain-header {
+    text-align: center;
+    margin-bottom: 22px;
+
+    .keychain-logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: radial-gradient(circle, rgba(227, 19, 55, 0.18) 0%, rgba(227, 19, 55, 0.04) 70%);
+      border: 1px solid rgba(227, 19, 55, 0.35);
+      margin-bottom: 12px;
+      box-shadow: 0 0 20px rgba(227, 19, 55, 0.25);
+
+      img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+      }
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.3px;
+    }
+
+    .keychain-subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.45;
+      margin: 0 auto;
+      max-width: 340px;
+    }
+  }
+
+  .keychain-warning-banner {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-size: 12.5px;
+    color: #fbbf24;
+
+    span {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    p {
+      margin: 0 0 6px 0;
+      color: #fde68a;
+      line-height: 1.35;
+    }
+
+    .keychain-install-link {
+      display: inline-block;
+      color: #f59e0b;
+      font-weight: 600;
+      text-decoration: underline;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #fcd34d;
+      }
+    }
+  }
+
+  .keychain-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .keychain-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #cbd5e1;
+      }
+
+      .keychain-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .keychain-at-prefix {
+          position: absolute;
+          left: 14px;
+          color: #e31337;
+          font-weight: 700;
+          font-size: 16px;
+          pointer-events: none;
+        }
+
+        input {
+          width: 100%;
+          padding: 12px 14px 12px 32px;
+          background: rgba(15, 23, 42, 0.7);
+          border: 1px solid rgba(148, 163, 184, 0.25);
+          border-radius: 10px;
+          color: #fff;
+          font-size: 15px;
+          outline: none;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+          &::placeholder {
+            color: #64748b;
+          }
+
+          &:focus {
+            border-color: #e31337;
+            box-shadow: 0 0 0 3px rgba(227, 19, 55, 0.15);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .keychain-input-hint {
+        font-size: 11.5px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+    }
+
+    .keychain-error-banner {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fca5a5;
+      font-size: 13px;
+      line-height: 1.4;
+      animation: shake 0.6s ease;
+    }
+
+    .keychain-status-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #93c5fd;
+      font-size: 13px;
+
+      .keychain-status-pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #3b82f6;
+        animation: pulseDot 1.4s infinite ease-in-out;
+        flex-shrink: 0;
+      }
+    }
+
+    .keychain-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+
+      .btn-keychain-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, #e31337 0%, #b30f2c 100%);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 18px rgba(227, 19, 55, 0.35);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 22px rgba(227, 19, 55, 0.45);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          opacity: 0.55;
+          cursor: not-allowed;
+          box-shadow: none;
+        }
+      }
+
+      .btn-keychain-cancel {
+        width: 100%;
+        padding: 10px;
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 10px;
+        font-size: 13.5px;
+        cursor: pointer;
+        transition: color 0.15s ease, border-color 0.15s ease;
+
+        &:hover:not(:disabled) {
+          color: #fff;
+          border-color: rgba(148, 163, 184, 0.4);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.modal-backdrop-dismiss {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
