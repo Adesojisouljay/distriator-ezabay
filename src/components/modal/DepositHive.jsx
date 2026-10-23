@@ -45,12 +45,21 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
     setLoading(true);
     try {
       const respone = await generateAddress(symbol);
-      if (respone.success) {
-        toast.success("Account address generated successfully");
-        getUserProfile(dispatch);
+      if (respone && respone.success) {
+        toast.success(respone.message || "Account address generated successfully");
+        await getUserProfile(dispatch);
+        if (respone.depositAddress) {
+          setSelectedAsset((prev) => ({
+            ...prev,
+            depositAddress: respone.depositAddress,
+            memo: respone.memo !== undefined ? respone.memo : prev?.memo,
+          }));
+        }
+      } else {
+        toast.error(respone?.message || "Failed to generate deposit address");
       }
     } catch (error) {
-      toast.error(error.message || "Failed to generate address");
+      toast.error(error?.message || "Failed to generate address");
     } finally {
       setLoading(false);
     }
@@ -124,10 +133,18 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           ) : (
             <div className="deposit-address">
               <span className="field-label">Deposit Address</span>
-              <div className="wrap">
-                <span className="val-text" style={{ color: '#f59e0b' }}>
-                  {selectedAsset?.currency || 'This asset'} deposit address is coming soon...
+              <div className="wrap generate-address-wrap">
+                <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
+                  No deposit address generated yet
                 </span>
+                <button
+                  type="button"
+                  className="btn-generate-deposit"
+                  disabled={loading}
+                  onClick={() => createAddress(selectedAsset?.coinId || selectedAsset?.currency)}
+                >
+                  {loading ? 'Generating...' : 'Generate Address'}
+                </button>
               </div>
             </div>
           )}

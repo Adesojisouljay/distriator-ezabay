@@ -439,6 +439,7 @@ export const removeAsset = async (coinId) => {
 ///not needed again i have added all in add asset func
 export const generateAddress = async (coinId) => {
   try {
+    const token = localStorage.getItem('token') || authToken;
     const response = await api.put(
       '/auth/generate-address',
       {
@@ -446,15 +447,15 @@ export const generateAddress = async (coinId) => {
       },
       {
         headers: {
-          Authorization: authToken,
+          Authorization: token,
         },
       }
     );
 
-    console.log('Wallet address generated successfully:');
     return response.data;
   } catch (error) {
     console.error('Failed to generate wallet address:', error.response?.data?.message || error.message);
+    return error.response?.data || { success: false, message: 'Failed to generate address' };
   }
 };
 
