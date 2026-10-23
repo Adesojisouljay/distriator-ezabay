@@ -33,9 +33,8 @@ import { BuySell } from '../components/modal/BuySell';
 import { SendOptions } from '../components/modal/sendOptions';
 
 // Whitelist of coins finalized for production deployment
-// Add coin symbols or IDs here to activate their "Add" button
-// Note: Bitcoin (BTC) is deactivated until the next release with HD wallet derivation
-const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd'];
+// Only Bitcoin is enabled for external HD wallet generation; all other coins remain Coming Soon
+const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc'];
 
 export const WalletPage = () => {
   const [cryptoData, setCryptoData] = useState([]);

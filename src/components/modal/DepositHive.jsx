@@ -133,19 +133,27 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           ) : (
             <div className="deposit-address">
               <span className="field-label">Deposit Address</span>
-              <div className="wrap generate-address-wrap">
-                <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
-                  No deposit address generated yet
-                </span>
-                <button
-                  type="button"
-                  className="btn-generate-deposit"
-                  disabled={loading}
-                  onClick={() => createAddress(selectedAsset?.coinId || selectedAsset?.currency)}
-                >
-                  {loading ? 'Generating...' : 'Generate Address'}
-                </button>
-              </div>
+              {selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin' || selectedAsset?.symbol?.toLowerCase() === 'btc' ? (
+                <div className="wrap generate-address-wrap">
+                  <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
+                    No deposit address generated yet
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-generate-deposit"
+                    disabled={loading}
+                    onClick={() => createAddress(selectedAsset?.coinId || selectedAsset?.currency)}
+                  >
+                    {loading ? 'Generating...' : 'Generate Address'}
+                  </button>
+                </div>
+              ) : (
+                <div className="wrap">
+                  <span className="val-text" style={{ color: '#f59e0b', fontSize: '13px' }}>
+                    {selectedAsset?.currency ? selectedAsset.currency.toUpperCase() : 'This asset'} deposit is coming soon...
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
