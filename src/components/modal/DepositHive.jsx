@@ -21,6 +21,10 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedMemo, setCopiedMemo] = useState(false);
 
+  const isHiveAsset = selectedAsset?.currency === 'hive' || selectedAsset?.currency === 'hbd' || selectedAsset?.coinId === 'hive' || selectedAsset?.coinId === 'hive_dollar';
+  const isBtc = selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin' || selectedAsset?.symbol?.toLowerCase() === 'btc';
+  const isUsdt = selectedAsset?.currency === 'tether' || selectedAsset?.coinId === 'tether' || selectedAsset?.symbol?.toLowerCase() === 'usdt';
+
   const handleCopyAddress = () => {
     if (!selectedAsset?.depositAddress) return;
     navigator.clipboard.writeText(selectedAsset.depositAddress);
@@ -83,7 +87,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
                 <img className="d-coin-wrap" src={selectedAsset.image} alt={selectedAsset.currency} />
               )}
               <span className="d-picker-currency">
-                {selectedAsset?.symbol || selectedAsset?.currency || 'Select Coin'}
+                {selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency || 'Select Coin'}
               </span>
               <RiArrowDownSFill size={20} />
             </div>
@@ -133,7 +137,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           ) : (
             <div className="deposit-address">
               <span className="field-label">Deposit Address</span>
-              {selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin' || selectedAsset?.symbol?.toLowerCase() === 'btc' ? (
+              {(isBtc || isUsdt) ? (
                 <div className="wrap generate-address-wrap">
                   <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
                     No deposit address generated yet
@@ -157,8 +161,31 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
             </div>
           )}
 
-          {/* Deposit Memo (if applicable) */}
-          {selectedAsset?.memo && (
+          {/* Network Badges for Multi-Chain Assets */}
+          {isUsdt && (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Network</span>
+              <div className="wrap">
+                <span className="val-text" style={{ fontWeight: 600, color: '#10b981' }}>
+                  BEP-20 (BNB Smart Chain)
+                </span>
+              </div>
+            </div>
+          )}
+
+          {isBtc && (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Network</span>
+              <div className="wrap">
+                <span className="val-text" style={{ fontWeight: 600, color: '#f59e0b' }}>
+                  Bitcoin (Native SegWit Bech32)
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Deposit Memo (ONLY for Hive & HBD) */}
+          {isHiveAsset && selectedAsset?.memo && (
             <>
               <div className="deposit-address">
                 <span className="field-label">Deposit Memo</span>
@@ -192,7 +219,14 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
         <div className="note-wrap">
           <header>Deposit Notice</header>
           <ul>
-            <li>Send only {selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency} to this deposit address.</li>
+            <li>
+              Send only {isUsdt ? 'USDT via BEP-20 (BNB Smart Chain)' : (selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency)} to this deposit address.
+            </li>
+            {isUsdt && (
+              <li style={{ color: '#10b981', fontWeight: 500 }}>
+                Only send USDT via the BNB Smart Chain (BEP-20). Transfers via TRC-20, ERC-20, or other chains cannot be processed.
+              </li>
+            )}
             <li>Credits are applied after standard blockchain network confirmations.</li>
           </ul>
         </div>

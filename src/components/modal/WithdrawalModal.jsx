@@ -301,11 +301,22 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
                   <input
                     className='w-input'
                     type="text"
-                    placeholder="Recipient Address"
+                    placeholder={
+                      (selectedAsset?.currency === 'tether' || selectedAsset?.coinId === 'tether')
+                        ? "BEP-20 Address (0x...)"
+                        : (selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin')
+                        ? "Bitcoin Address (bc1q...)"
+                        : "Recipient Account"
+                    }
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
                     id="recipient-account"
                   />
+                  {(selectedAsset?.currency === 'tether' || selectedAsset?.coinId === 'tether') && (
+                    <span style={{ fontSize: '11px', color: '#10b981', display: 'block', marginTop: '3px' }}>
+                      Network: BEP-20 (BNB Smart Chain). Ensure the recipient address supports BSC BEP-20 tokens.
+                    </span>
+                  )}
                 </div>
 
                 <div className="w-A-input-group">
@@ -350,9 +361,9 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
                   </div>
                 </div>
                 
-                {selectedAsset?.memo && (
+                {(selectedAsset?.currency === "hive" || selectedAsset?.currency === "hive_dollar" || selectedAsset?.currency === "hbd") && (
                   <>
-                    <label htmlFor="memo">Memo:</label>
+                    <label htmlFor="memo">Memo (Optional):</label>
                     <input
                       className='w-input'
                       type="text"
