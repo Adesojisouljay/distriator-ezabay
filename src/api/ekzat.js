@@ -134,6 +134,26 @@ export const requestToken = async () => {
     console.log(error)
   }
 }
+
+export const getWithdrawalKeychainChallenge = async ({ amount, currency, to, action = 'withdrawal', username } = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (amount) params.append('amount', amount);
+    if (currency) params.append('currency', currency);
+    if (to) params.append('to', to);
+    if (action) params.append('action', action);
+    if (username) params.append('username', username);
+
+    const response = await api.get(`/withdrawals/keychain-challenge?${params.toString()}`, {
+      headers: {
+        Authorization: authToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to get Keychain challenge' };
+  }
+};
 export const requestPasswordResetToken = async (email) => {
   try {
     const response = await api.post('/auth/password-reset-token', {email}, {
@@ -532,17 +552,11 @@ export const getTransactionFees = async (coinId, fromAddress = null, toAddress =
   }
 };
 
-export const internalTransfer = async ({ to, amount, currency, memo, withdrawalToken }) => {
+export const internalTransfer = async (transferData) => {
   try {
     const response = await api.post(
       '/withdrawals/internal-transfer',
-      {
-        to,
-        amount,
-        currency,
-        memo,
-        withdrawalToken,
-      },
+      transferData,
       {
         headers: {
           Authorization: authToken,
