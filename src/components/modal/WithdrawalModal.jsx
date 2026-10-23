@@ -23,6 +23,30 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [openList, setOpenList] = useState(false)
   const [displaySearch , setDisplaySearch] = useState(false)
+
+  const getUnitPriceUsd = (asset) => {
+    if (!asset) return 0;
+    if (asset.usdValue && Number(asset.usdValue) > 0) return Number(asset.usdValue);
+    if (asset.balance && asset.asseUsdtWorth && Number(asset.balance) > 0) {
+      return Number(asset.asseUsdtWorth) / Number(asset.balance);
+    }
+    return 0;
+  };
+
+  const formatCryptoAmount = (val, maxDecimals = 8) => {
+    if (val === null || val === undefined || isNaN(val)) return '0';
+    const num = Number(val);
+    if (num === 0) return '0';
+    const fixed = num.toFixed(maxDecimals);
+    return parseFloat(fixed).toString();
+  };
+
+  const unitPrice = getUnitPriceUsd(selectedAsset);
+  const availBalanceFormatted = formatCryptoAmount(selectedAsset?.balance, selectedAsset?.currency === 'bitcoin' ? 8 : 4);
+  const availBalanceUsd = (Number(selectedAsset?.balance || 0) * unitPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const feeFormatted = formatCryptoAmount(fee, selectedAsset?.currency === 'bitcoin' ? 8 : 4);
+  const feeUsd = (Number(fee || 0) * unitPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const amountUsd = (Number(amount || 0) * unitPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   
   useEffect(() => {
     handleGetFees(selectedAsset?.currency)
@@ -184,14 +208,25 @@ export const WithdrawalModal = ({ isOpen, onClose, assets, user }) => {
               }}
               placeholder="Enter amount"
             />
+            {Number(amount) > 0 && unitPrice > 0 && (
+              <span style={{ fontSize: "12px", color: "var(--text-muted, #94a3b8)", marginRight: "8px", whiteSpace: "nowrap" }}>
+                ≈ ${amountUsd}
+              </span>
+            )}
             <div className="max-wrap">
                <span onClick={()=> setAmount(selectedAsset.balance)}>Max</span>
             </div>
             </div>
             
             <div className="wrap">
-              <span>Available Balance: {selectedAsset.balance} </span>
-             <span>Fee: {fee ? fee : (0.000)}({selectedAsset.symbol.toUpperCase()})</span>
+              <span>
+                Available Balance: {availBalanceFormatted}{" "}
+                {unitPrice > 0 && <span style={{ color: "var(--accent-green, #10b981)", marginLeft: "4px" }}>(${availBalanceUsd})</span>}
+              </span>
+              <span>
+                Fee: {feeFormatted} ({selectedAsset?.symbol?.toUpperCase()})
+                {unitPrice > 0 && <span style={{ color: "var(--text-muted, #94a3b8)", marginLeft: "4px" }}>(${feeUsd})</span>}
+              </span>
             </div>
             </div>
             
