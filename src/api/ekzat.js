@@ -379,12 +379,9 @@ export const cancelFiatDeposit = async (depositRequestId) => {
   }
 };
 
-export const fiatTransfer = async ({ receiverIdentifier, amount }) => {
+export const fiatTransfer = async (transferData) => {
   try {
-    const response = await api.post('/transactions/fiat-transfer', {
-      receiverIdentifier,
-      amount,
-    }, {
+    const response = await api.post('/transactions/fiat-transfer', transferData, {
       headers: {
         Authorization: authToken,
       },

@@ -3,7 +3,8 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoClose } from 'react-icons/io5';
 import { LuBadgeInfo, LuUserCheck } from "react-icons/lu";
-import { fiatTransfer, requestToken } from '../../api/ekzat';
+import { ShieldCheck, Mail } from "lucide-react";
+import { fiatTransfer, requestToken, getWithdrawalKeychainChallenge } from '../../api/ekzat';
 import { getUserProfile, getReceiverProfile } from '../../api/profile';
 import { Loader } from '../loader/Loader';
 import Spinner from '../spinner/Spinner';
@@ -12,8 +13,12 @@ import "./fiatransfer.scss";
 export const FiatTransferModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.ekzaUser?.user);
+  const isKeychainInstalled = typeof window !== 'undefined' && !!window.hive_keychain;
+
   const [amount, setAmount] = useState("");
   const [receiver, setReceiver] = useState("");
+  const [authMethod, setAuthMethod] = useState(isKeychainInstalled ? 'keychain' : 'email');
+  const [hiveUsernameInput, setHiveUsernameInput] = useState(user?.hiveUsername || '');
   const [loading, setLoading] = useState(false);
   const [receiverInfo, setReceiverInfo] = useState(null);
   const debounceTimeout = useRef(null);
@@ -23,6 +28,12 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
   const [tokenExpiry, setTokenExpiry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
+
+  useEffect(() => {
+    if (user?.hiveUsername) {
+      setHiveUsernameInput(user.hiveUsername);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!receiver) {
@@ -72,6 +83,85 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleKeychainTransfer = async () => {
+    if (!amount || Number(amount) <= 0) {
+      toast.error("Please enter a valid transfer amount.");
+      return;
+    }
+    if (Number(amount) > Number(nairaBalance)) {
+      toast.error("Transfer amount exceeds available cash balance.");
+      return;
+    }
+    if (!receiver) {
+      toast.error("Please enter a recipient username or email.");
+      return;
+    }
+
+    const cleanHiveUser = (user?.hiveUsername || hiveUsernameInput || '').trim().replace(/^@/, '').toLowerCase();
+    if (!cleanHiveUser) {
+      toast.error("Please enter your Hive username to sign with Keychain.");
+      return;
+    }
+
+    if (!window.hive_keychain) {
+      toast.error("Hive Keychain extension not detected. Please install Keychain or switch to Email Code.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const challengeRes = await getWithdrawalKeychainChallenge({
+        amount,
+        currency: 'NGN',
+        to: receiver,
+        action: 'fiat-transfer',
+        username: cleanHiveUser,
+      });
+
+      if (!challengeRes?.success || !challengeRes?.challenge) {
+        throw new Error(challengeRes?.message || "Failed to generate Keychain authorization challenge.");
+      }
+
+      window.hive_keychain.requestSignBuffer(
+        cleanHiveUser,
+        challengeRes.challenge,
+        'Posting',
+        async (keychainResponse) => {
+          if (!keychainResponse || !keychainResponse.success) {
+            setIsLoading(false);
+            toast.error(keychainResponse?.message || "Keychain signature cancelled or failed.");
+            return;
+          }
+
+          try {
+            await fiatTransfer({
+              receiverIdentifier: receiver,
+              amount,
+              authMethod: 'keychain',
+              keychainSignature: keychainResponse.result,
+              keychainChallenge: challengeRes.challenge,
+              hiveUsername: cleanHiveUser,
+            });
+
+            toast.success(`Fiat transfer of ₦${Number(amount).toLocaleString()} to ${receiver} successful!`);
+            getUserProfile(dispatch);
+            handleClose();
+          } catch (apiErr) {
+            console.error(apiErr);
+            toast.error(apiErr.message || "Fiat transfer failed.");
+          } finally {
+            setIsLoading(false);
+          }
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Error preparing Keychain signing.");
+      setIsLoading(false);
+    }
+  };
+
   const handleFiatTransfer = async () => {
     if (!withdrawalToken) {
       toast.error("Please enter the verification code sent to your email.");
@@ -79,7 +169,12 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
     }
     setIsLoading(true);
     try {
-      await fiatTransfer({ receiverIdentifier: receiver, amount });
+      await fiatTransfer({
+        receiverIdentifier: receiver,
+        amount,
+        authMethod: 'email',
+        withdrawalToken,
+      });
       toast.success(`Fiat transfer to ${receiver} successful!`);
       getUserProfile(dispatch);
       handleClose();
@@ -150,6 +245,55 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
 
           {!requestedToken ? (
             <div className="transfer-form-step">
+              {/* Auth Method Selector */}
+              <div className="auth-method-selector">
+                <button
+                  type="button"
+                  className={`auth-method-btn ${authMethod === 'keychain' ? 'active' : ''}`}
+                  onClick={() => setAuthMethod('keychain')}
+                >
+                  <ShieldCheck size={15} /> Hive Keychain (1-Click)
+                </button>
+                <button
+                  type="button"
+                  className={`auth-method-btn ${authMethod === 'email' ? 'active' : ''}`}
+                  onClick={() => setAuthMethod('email')}
+                >
+                  <Mail size={15} /> Email Code
+                </button>
+              </div>
+
+              {authMethod === 'keychain' && !isKeychainInstalled && (
+                <div className="keychain-badge-warning">
+                  <span>Keychain extension not detected. Switch to Email Code or install Hive Keychain.</span>
+                </div>
+              )}
+
+              {authMethod === 'keychain' && user?.hiveUsername && (
+                <div className="keychain-badge-info">
+                  <span>Authorizing with linked Hive account: <strong>@{user.hiveUsername}</strong></span>
+                </div>
+              )}
+
+              {authMethod === 'keychain' && !user?.hiveUsername && (
+                <div className="fiat-input-section" style={{ marginBottom: '4px' }}>
+                  <label className="field-label" htmlFor="hive-username-transfer">Hive Username (for Keychain signature):</label>
+                  <div className="amount-input-card">
+                    <input
+                      id="hive-username-transfer"
+                      type="text"
+                      placeholder="e.g. yourhiveaccount"
+                      value={hiveUsernameInput}
+                      onChange={(e) => setHiveUsernameInput(e.target.value.trim().toLowerCase())}
+                      className="fiat-text-input"
+                    />
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', display: 'block' }}>
+                    Your Hive account will be securely linked to your Ezabay profile upon confirmation.
+                  </span>
+                </div>
+              )}
+
               {/* Recipient Input */}
               <div className="fiat-input-section">
                 <label className="field-label" htmlFor="receiver">Recipient Username or Email</label>
@@ -220,10 +364,16 @@ export const FiatTransferModal = ({ isOpen, onClose }) => {
               <button
                 disabled={notAllowed || isLoading}
                 className={`fiat-primary-btn ${notAllowed ? 'disabled' : ''}`}
-                onClick={handleRequestToken}
+                onClick={authMethod === 'keychain' ? handleKeychainTransfer : handleRequestToken}
                 type="button"
               >
-                {isLoading ? <Spinner /> : "Proceed to Verification"}
+                {isLoading ? (
+                  <Spinner />
+                ) : authMethod === 'keychain' ? (
+                  "Sign & Transfer with Keychain"
+                ) : (
+                  "Proceed to Verification"
+                )}
               </button>
             </div>
           ) : (

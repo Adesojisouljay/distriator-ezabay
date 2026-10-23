@@ -5,7 +5,8 @@ import { BsPlusCircleFill } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
 import { LuBadgeInfo } from "react-icons/lu";
 import { FaBuildingColumns } from "react-icons/fa6";
-import { requestToken, requestFiatWithdrawal } from "../../api/ekzat";
+import { ShieldCheck, Mail } from "lucide-react";
+import { requestToken, requestFiatWithdrawal, getWithdrawalKeychainChallenge } from "../../api/ekzat";
 import { getUserProfile } from "../../api/profile";
 import { GeneralDropdown } from "../dropdown/GeneralDrpdpown";
 import { AddAccount } from "./AddAccount";
@@ -17,17 +18,27 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
   const userAccounts = user?.accounts || [];
   const dispatch = useDispatch();
 
+  const isKeychainInstalled = typeof window !== 'undefined' && !!window.hive_keychain;
+
   const [selectedAccount, setSelectedAccount] = useState(
     userAccounts.length > 0 ? userAccounts[0] : null
   );
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [withdrawalToken, setWithdrawalToken] = useState("");
+  const [authMethod, setAuthMethod] = useState(isKeychainInstalled ? 'keychain' : 'email');
+  const [hiveUsernameInput, setHiveUsernameInput] = useState(user?.hiveUsername || '');
   const [requestedToken, setRequestedToken] = useState(false);
   const [tokenExpiry, setTokenExpiry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [openList, setOpenList] = useState(false);
   const [addingAccount, setAddingAccount] = useState(false);
+
+  useEffect(() => {
+    if (user?.hiveUsername) {
+      setHiveUsernameInput(user.hiveUsername);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (userAccounts.length > 0 && !selectedAccount) {
@@ -54,6 +65,94 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const nairaBalance = user?.nairaBalance != null ? Number(user.nairaBalance).toFixed(2) : "0.00";
+
+  const handleKeychainWithdrawal = async () => {
+    if (!withdrawalAmount) {
+      toast.error("Please enter a withdrawal amount.");
+      return;
+    }
+    if (Number(withdrawalAmount) < 500) {
+      toast.error("Minimum withdrawal amount is ₦500.");
+      return;
+    }
+    if (Number(withdrawalAmount) > Number(nairaBalance)) {
+      toast.error("Insufficient Naira balance.");
+      return;
+    }
+    if (!selectedAccount?.accountNumber) {
+      toast.error("Please select a bank account.");
+      return;
+    }
+
+    const cleanHiveUser = (user?.hiveUsername || hiveUsernameInput || '').trim().replace(/^@/, '').toLowerCase();
+    if (!cleanHiveUser) {
+      toast.error("Please enter your Hive username to sign with Keychain.");
+      return;
+    }
+
+    if (!window.hive_keychain) {
+      toast.error("Hive Keychain extension not detected. Please install Keychain or switch to Email Code.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const challengeRes = await getWithdrawalKeychainChallenge({
+        amount: withdrawalAmount,
+        currency: 'NGN',
+        to: selectedAccount.accountNumber,
+        action: 'fiat-withdrawal',
+        username: cleanHiveUser,
+      });
+
+      if (!challengeRes?.success || !challengeRes?.challenge) {
+        throw new Error(challengeRes?.message || "Failed to generate Keychain authorization challenge.");
+      }
+
+      window.hive_keychain.requestSignBuffer(
+        cleanHiveUser,
+        challengeRes.challenge,
+        'Posting',
+        async (keychainResponse) => {
+          if (!keychainResponse || !keychainResponse.success) {
+            setIsLoading(false);
+            toast.error(keychainResponse?.message || "Keychain signature cancelled or failed.");
+            return;
+          }
+
+          try {
+            const withdrawalData = {
+              amount: withdrawalAmount,
+              accountNumber: selectedAccount?.accountNumber,
+              authMethod: 'keychain',
+              keychainSignature: keychainResponse.result,
+              keychainChallenge: challengeRes.challenge,
+              hiveUsername: cleanHiveUser,
+            };
+
+            const response = await requestFiatWithdrawal(withdrawalData);
+            if (response.success) {
+              getUserProfile(dispatch);
+              toast.success("Fiat withdrawal request submitted successfully!");
+              handleClose();
+            } else {
+              toast.error(response.message || "Withdrawal request failed.");
+            }
+          } catch (apiErr) {
+            console.error(apiErr);
+            toast.error(apiErr.message || "Withdrawal request failed.");
+          } finally {
+            setIsLoading(false);
+          }
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Error preparing Keychain signing.");
+      setIsLoading(false);
+    }
+  };
 
   const handleRequestToken = async () => {
     if (!withdrawalAmount) {
@@ -107,6 +206,7 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
       const withdrawalData = {
         amount: withdrawalAmount,
         accountNumber: selectedAccount?.accountNumber,
+        authMethod: 'email',
         withdrawalToken,
       };
       const response = await requestFiatWithdrawal(withdrawalData);
@@ -166,6 +266,55 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
             <>
               {!requestedToken ? (
                 <div className="withdrawal-form-step">
+                  {/* Auth Method Selector */}
+                  <div className="auth-method-selector">
+                    <button
+                      type="button"
+                      className={`auth-method-btn ${authMethod === 'keychain' ? 'active' : ''}`}
+                      onClick={() => setAuthMethod('keychain')}
+                    >
+                      <ShieldCheck size={15} /> Hive Keychain (1-Click)
+                    </button>
+                    <button
+                      type="button"
+                      className={`auth-method-btn ${authMethod === 'email' ? 'active' : ''}`}
+                      onClick={() => setAuthMethod('email')}
+                    >
+                      <Mail size={15} /> Email Code
+                    </button>
+                  </div>
+
+                  {authMethod === 'keychain' && !isKeychainInstalled && (
+                    <div className="keychain-badge-warning">
+                      <span>Keychain extension not detected. Switch to Email Code or install Hive Keychain.</span>
+                    </div>
+                  )}
+
+                  {authMethod === 'keychain' && user?.hiveUsername && (
+                    <div className="keychain-badge-info">
+                      <span>Authorizing with linked Hive account: <strong>@{user.hiveUsername}</strong></span>
+                    </div>
+                  )}
+
+                  {authMethod === 'keychain' && !user?.hiveUsername && (
+                    <div className="fiat-input-section" style={{ marginBottom: '4px' }}>
+                      <label className="field-label" htmlFor="hive-username-fiat">Hive Username (for Keychain signature):</label>
+                      <div className="amount-input-card">
+                        <input
+                          id="hive-username-fiat"
+                          type="text"
+                          placeholder="e.g. yourhiveaccount"
+                          value={hiveUsernameInput}
+                          onChange={(e) => setHiveUsernameInput(e.target.value.trim().toLowerCase())}
+                          className="fiat-text-input"
+                        />
+                      </div>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', display: 'block' }}>
+                        Your Hive account will be securely linked to your Ezabay profile upon confirmation.
+                      </span>
+                    </div>
+                  )}
+
                   {/* Amount Input */}
                   <div className="fiat-input-section">
                     <div className="label-balance-row">
@@ -248,11 +397,17 @@ export const FiatWithdrawalModal = ({ isOpen, onClose }) => {
 
                   <button
                     className="fiat-primary-btn"
-                    onClick={handleRequestToken}
+                    onClick={authMethod === 'keychain' ? handleKeychainWithdrawal : handleRequestToken}
                     disabled={isLoading || !withdrawalAmount || Number(withdrawalAmount) < 500}
                     type="button"
                   >
-                    {isLoading ? <Spinner /> : "Request Security Token"}
+                    {isLoading ? (
+                      <Spinner />
+                    ) : authMethod === 'keychain' ? (
+                      "Sign & Withdraw with Keychain"
+                    ) : (
+                      "Request Security Token"
+                    )}
                   </button>
                 </div>
               ) : (
