@@ -439,6 +439,17 @@ a{
   }
 }
 
+// Ensure ReactToastify notifications always render ABOVE all modals and dark backdrops
+.Toastify__toast-container {
+  z-index: 999999 !important;
+}
+
+.Toastify__toast {
+  font-family: inherit !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
 // Universal Modern Close Button (Eliminates old red X circle globally!)
 .close-modal,
 .close-btn {
