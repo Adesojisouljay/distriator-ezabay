@@ -44,7 +44,7 @@ export const NavBar = () => {
           <div className="nav-left">
             {isAuthenticated ? (
               <>
-                {/* On mobile only (< 768px): mobile drawer toggle & brand */}
+                {/* On mobile only (< 768px): mobile drawer toggle */}
                 <button
                   className="menu-toggle-btn mobile-only"
                   onClick={handleToggle}
@@ -54,11 +54,23 @@ export const NavBar = () => {
                   <AiOutlineMenu size={20} />
                 </button>
 
-                <Link to="/" className="brand-link mobile-only">
-                  <div className="logo">
-                    <img src={logo} alt="Ezabay" />
-                  </div>
-                </Link>
+                {/* When sidebar is collapsed (rail mode), show logo in top navbar! */}
+                {isCollapsed && (
+                  <Link to="/" className="brand-link">
+                    <div className="logo">
+                      <img src={logo} alt="Ezabay" />
+                    </div>
+                  </Link>
+                )}
+
+                {/* When sidebar is expanded on desktop, logo is in sidebar, but mobile still needs it */}
+                {!isCollapsed && (
+                  <Link to="/" className="brand-link mobile-only">
+                    <div className="logo">
+                      <img src={logo} alt="Ezabay" />
+                    </div>
+                  </Link>
+                )}
               </>
             ) : (
               <Link to="/" className="brand-link">
