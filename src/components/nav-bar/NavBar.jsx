@@ -37,17 +37,6 @@ export const NavBar = () => {
     window.location.href = '/';
   };
 
-  const getPageTitle = (path) => {
-    if (path.startsWith('/dashboard')) return 'Dashboard';
-    if (path.startsWith('/wallet')) return 'Wallet Overview';
-    if (path.startsWith('/transactions')) return 'Transaction History';
-    if (path.startsWith('/hive-onboard')) return 'Create Hive Account';
-    if (path.startsWith('/profile')) return 'Profile & Settings';
-    return '';
-  };
-
-  const pageTitle = getPageTitle(location.pathname);
-
   return (
     <>
       <nav className={`navbar ${isAuthenticated ? (isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded') : ''}`}>
@@ -55,7 +44,7 @@ export const NavBar = () => {
           <div className="nav-left">
             {isAuthenticated ? (
               <>
-                {/* On mobile: show toggle and logo so mobile drawer can be opened */}
+                {/* On mobile only (< 768px): mobile drawer toggle & brand */}
                 <button
                   className="menu-toggle-btn mobile-only"
                   onClick={handleToggle}
@@ -70,13 +59,6 @@ export const NavBar = () => {
                     <img src={logo} alt="Ezabay" />
                   </div>
                 </Link>
-
-                {/* On desktop: show page title (the sidebar already has the logo and toggle) */}
-                {pageTitle && (
-                  <div className="nav-page-title desktop-only">
-                    <span>{pageTitle}</span>
-                  </div>
-                )}
               </>
             ) : (
               <Link to="/" className="brand-link">
