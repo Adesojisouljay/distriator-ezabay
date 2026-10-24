@@ -3,11 +3,12 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { userReducer } from './userReducer';
 import { currencyReducer } from './currencySlice';
-
+import { sidebarReducer } from './sidebarSlice';
 
 const rootReducer = combineReducers({
     ekzaUser: userReducer,
-    currency: currencyReducer
+    currency: currencyReducer,
+    sidebar: sidebarReducer,
   });
 
 const persistConfig = {

@@ -12,11 +12,28 @@
   top: 0;
   z-index: 1000;
   padding: 0 32px;
-  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+  transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color var(--transition-normal),
+              border-color var(--transition-normal);
+
+  @media (min-width: 768px) {
+    &.sidebar-expanded {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+    }
+
+    &.sidebar-collapsed {
+      margin-left: 68px;
+      width: calc(100% - 68px);
+    }
+  }
 
   @include respond(phone) {
     padding: 0 16px;
     height: 60px;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 }
 

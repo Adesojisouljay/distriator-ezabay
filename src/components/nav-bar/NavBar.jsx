@@ -13,47 +13,42 @@ import { userAvatar } from '../../vairables/protectedRoutes';
 import RightNav from './RightNav';
 import logo from "../../assets/Ezabay-logo.png";
 import ThemeToggle from '../theme/ThemeToggle';
+import { toggleSidebar, toggleMobileSidebar } from '../../redux/sidebarSlice';
 
 export const NavBar = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state?.ekzaUser?.isAuthenticated);
   const user = useSelector(state => state?.ekzaUser?.user);
+  const isCollapsed = useSelector(state => state?.sidebar?.isCollapsed ?? false);
 
-  const [nav, setNav] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [rightNav, setRightNav] = useState(false)
-
-  const handleNav = () => {
-    setNav(!nav);
+  const handleToggle = () => {
+    if (window.innerWidth < 768) {
+      dispatch(toggleMobileSidebar());
+    } else {
+      dispatch(toggleSidebar());
+    }
   };
-
-  const handleRightNav = ()=>{
-    setRightNav(!rightNav)
-  }
 
   const handleLogout = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     dispatch(logout());
     dispatch(clearCurrency());
-     localStorage.removeItem("token")
-    //  window.location.href = '/';
-  };
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const closeDropdown = () => {
-    setDropdownOpen(false);
+    localStorage.removeItem("token");
+    window.location.href = '/';
   };
 
   return (
     <>
-      <nav className="navbar">
+      <nav className={`navbar ${isAuthenticated ? (isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded') : ''}`}>
         <div className="nav-content">
           <div className="nav-left">
             {isAuthenticated && (
-              <button className="menu-toggle-btn" onClick={handleRightNav} aria-label="Open sidebar menu">
+              <button
+                className="menu-toggle-btn"
+                onClick={handleToggle}
+                aria-label="Toggle sidebar menu"
+                title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
                 <AiOutlineMenu size={20} />
               </button>
             )}
@@ -93,7 +88,7 @@ export const NavBar = () => {
         </div>
       </nav>
       {isAuthenticated && (
-        <RightNav rightNav={rightNav} handleRightNav={handleRightNav} handleLogout={handleLogout} />
+        <RightNav />
       )}
     </>
   );

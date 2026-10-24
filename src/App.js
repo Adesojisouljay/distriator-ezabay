@@ -68,10 +68,13 @@ function App() {
     await getUserProfile(dispatch);
   }
 
+  const isAuthenticated = useSelector((state) => state.ekzaUser?.isAuthenticated);
+  const isCollapsed = useSelector((state) => state.sidebar?.isCollapsed ?? false);
+
   return (
     <div className="app">
       <NavBar/>
-      <div className='app-container'>
+      <div className={`app-container ${isAuthenticated ? (isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded') : ''}`}>
       {!tokenValid && isProtectedRoute && <InvalidTokenModal /> }
         <Routes>
           <Route exact path="/" element={<Home/>}/>
