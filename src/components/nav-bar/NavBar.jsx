@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { persistor } from '../../redux/store';
 // import logo from "../../assets/logo-cut.png";
 import './navbar.scss';
@@ -17,6 +16,7 @@ import { toggleSidebar, toggleMobileSidebar } from '../../redux/sidebarSlice';
 
 export const NavBar = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const isAuthenticated = useSelector(state => state?.ekzaUser?.isAuthenticated);
   const user = useSelector(state => state?.ekzaUser?.user);
   const isCollapsed = useSelector(state => state?.sidebar?.isCollapsed ?? false);
@@ -37,27 +37,54 @@ export const NavBar = () => {
     window.location.href = '/';
   };
 
+  const getPageTitle = (path) => {
+    if (path.startsWith('/dashboard')) return 'Dashboard';
+    if (path.startsWith('/wallet')) return 'Wallet Overview';
+    if (path.startsWith('/transactions')) return 'Transaction History';
+    if (path.startsWith('/hive-onboard')) return 'Create Hive Account';
+    if (path.startsWith('/profile')) return 'Profile & Settings';
+    return '';
+  };
+
+  const pageTitle = getPageTitle(location.pathname);
+
   return (
     <>
       <nav className={`navbar ${isAuthenticated ? (isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded') : ''}`}>
         <div className="nav-content">
           <div className="nav-left">
-            {isAuthenticated && (
-              <button
-                className="menu-toggle-btn"
-                onClick={handleToggle}
-                aria-label="Toggle sidebar menu"
-                title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-              >
-                <AiOutlineMenu size={20} />
-              </button>
-            )}
+            {isAuthenticated ? (
+              <>
+                {/* On mobile: show toggle and logo so mobile drawer can be opened */}
+                <button
+                  className="menu-toggle-btn mobile-only"
+                  onClick={handleToggle}
+                  aria-label="Toggle sidebar menu"
+                  title="Open menu"
+                >
+                  <AiOutlineMenu size={20} />
+                </button>
 
-            <Link to="/" className="brand-link">
-              <div className="logo">
-                <img src={logo} alt="Ezabay" />
-              </div>
-            </Link>
+                <Link to="/" className="brand-link mobile-only">
+                  <div className="logo">
+                    <img src={logo} alt="Ezabay" />
+                  </div>
+                </Link>
+
+                {/* On desktop: show page title (the sidebar already has the logo and toggle) */}
+                {pageTitle && (
+                  <div className="nav-page-title desktop-only">
+                    <span>{pageTitle}</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <Link to="/" className="brand-link">
+                <div className="logo">
+                  <img src={logo} alt="Ezabay" />
+                </div>
+              </Link>
+            )}
           </div>
 
           <div className="nav-right">
