@@ -33,8 +33,8 @@ import { BuySell } from '../components/modal/BuySell';
 import { SendOptions } from '../components/modal/sendOptions';
 
 // Whitelist of coins finalized for production deployment
-// Only Bitcoin is enabled for external HD wallet generation; all other coins remain Coming Soon
-const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc'];
+// Bitcoin and USDT BEP-20 are fully integrated with our unified HD wallet infrastructure
+const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc', 'tether', 'usdt'];
 
 export const WalletPage = () => {
   const [cryptoData, setCryptoData] = useState([]);
@@ -118,7 +118,14 @@ export const WalletPage = () => {
   };
 
   const isAssetAdded = (coinId) => {
-    return assets.some((a) => a.coinId === coinId);
+    if (!coinId) return false;
+    const cleanId = coinId.toString().toLowerCase();
+    return assets.some(
+      (a) =>
+        a.coinId?.toString().toLowerCase() === cleanId ||
+        a.currency?.toString().toLowerCase() === cleanId ||
+        a.symbol?.toString().toLowerCase() === cleanId
+    );
   };
 
   // Filter user assets
