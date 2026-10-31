@@ -9,7 +9,7 @@ import { setCurrency } from "../redux/currencySlice";
 import { isTokenValid } from "../utils";
 import Logo from "../assets/Ezabay-st-logo.png";
 import Secure from "../assets/icons8-secure-64.png"
-import hiveLogo from "../assets/hive-logo.png";
+import keychainLogo from "../assets/keychain-logo.png";
 import { currenciesList } from "../vairables/protectedRoutes";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { PasswordReset } from "../components/modal/PasswordReset";
@@ -141,7 +141,7 @@ const closePassword = () => {
           className="keychain-login-btn"
           onClick={() => setOpenKeychainModal(true)}
         >
-          <img src={hiveLogo} alt="Hive" className="hive-btn-icon" />
+          <img src={keychainLogo} alt="Hive Keychain" className="keychain-btn-icon" />
           <span>Login with Hive Keychain</span>
         </button>
         <div className="reg-link">

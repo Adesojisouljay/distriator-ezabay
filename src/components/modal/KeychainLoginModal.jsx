@@ -4,7 +4,7 @@ import { getKeychainChallenge, loginWithKeychainApi } from '../../api/auth';
 import { loginSuccess } from '../../redux/userReducer';
 import { setCurrency } from '../../redux/currencySlice';
 import { currenciesList } from '../../vairables/protectedRoutes';
-import hiveLogo from '../../assets/hive-logo.png';
+import keychainLogo from '../../assets/keychain-logo.png';
 import Spinner from '../spinner/Spinner';
 import './keychain-login-modal.scss';
 
@@ -131,7 +131,7 @@ export const KeychainLoginModal = ({ isOpen, onClose }) => {
 
         <div className="keychain-header">
           <div className="keychain-logo-badge">
-            <img src={hiveLogo} alt="Hive" />
+            <img src={keychainLogo} alt="Hive Keychain" />
           </div>
           <h2>Hive Keychain Login</h2>
           <p className="keychain-subtitle">
