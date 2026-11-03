@@ -1,210 +1,183 @@
 @import "../mixins.scss";
-.register-container {
-  display: flex;
-  width: 100%;
-  margin: 0px 100px;
-  @include respond(phone) {
-    margin: 0px;
+@import "./login.scss";
+
+// -------------------------------------------------------------
+// REGISTER SPECIFIC OVERRIDES & EXTENSIONS
+// -------------------------------------------------------------
+.register-page-root {
+  .register-container {
+    max-width: 1140px;
+    grid-template-columns: 1fr 1.15fr;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+      max-width: 540px;
+    }
   }
 
-  .reg-left {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  .register-card {
+    gap: 16px;
+    padding: 30px 28px;
+
     @include respond(phone) {
-      width: 100%;
+      padding: 22px 16px;
+    }
+  }
+
+  .register-form {
+    gap: 14px;
+  }
+
+  // 2-Column form rows on desktop
+  .form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+
+    @include respond(phone) {
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
 
-    .keychain-register-wrap {
-      width: 70%;
-      margin: 10px 0 6px 0;
-      @include respond(phone) {
-        width: 95%;
-      }
+    .form-field {
+      width: 100%;
+      min-width: 0;
 
-      .keychain-register-btn {
+      .label-optional {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 400;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  // Integration with GeneralDropdown
+  .country-dropdown-wrap {
+    width: 100%;
+
+    .gd-container {
+      width: 100%;
+      position: relative;
+
+      .gd-item-select-wrap {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 12px;
-        width: 100%;
-        padding: 13px 20px;
-        border-radius: 0.65rem;
-        border: 1px solid rgba(227, 19, 55, 0.4);
-        background: linear-gradient(170deg, rgba(35, 41, 54, 0.95), rgba(16, 21, 30, 0.98));
-        color: #fff;
+        justify-content: space-between;
+        background: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        padding: 12px 14px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        transition: all var(--transition-fast);
+        min-height: 46px;
+        box-sizing: border-box;
 
         &:hover {
-          background: linear-gradient(170deg, rgba(45, 52, 68, 0.98), rgba(20, 26, 38, 1));
-          border-color: rgba(227, 19, 55, 0.7);
-          transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(227, 19, 55, 0.25);
+          border-color: var(--border-light);
+          background: var(--bg-input-focus);
         }
 
-        .keychain-btn-icon {
-          width: 24px;
-          height: 24px;
-          object-fit: contain;
-          border-radius: 4px;
+        &.active-open {
+          border-color: var(--accent-green);
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
 
-        span {
-          font-size: 15px;
-          font-weight: 600;
-          letter-spacing: -0.2px;
+        .gd-trigger-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
 
-          @include respond(phone) {
-            font-size: 13.5px;
+          .gd-trigger-icon {
+            color: var(--text-muted);
+            flex-shrink: 0;
+          }
+
+          .gd-select-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .gd-caret-icon {
+          color: var(--text-muted);
+          transition: transform var(--transition-fast);
+
+          &.open {
+            transform: rotate(180deg);
+            color: var(--accent-green);
           }
         }
       }
 
-      .or-divider {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin: 18px 0 12px 0;
-        color: #64748b;
-        font-size: 13px;
+      .gd-popover-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: var(--dropdown-gradient, #111827);
+        border: 1px solid var(--border-subtle);
+        border-radius: 14px;
+        box-shadow: var(--shadow-lg);
+        max-height: 240px;
+        overflow-y: auto;
+        z-index: 1000;
+        padding: 6px;
+        box-sizing: border-box;
 
-        &::before,
-        &::after {
-          content: '';
-          flex: 1;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        .gd-search-wrap {
+          position: sticky;
+          top: 0;
+          background: #111827;
+          padding: 6px;
+          border-bottom: 1px solid var(--border-subtle);
+          margin-bottom: 4px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          z-index: 2;
+
+          .gd-search-icon {
+            color: var(--text-muted);
+          }
+
+          .gd-search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 13px;
+          }
         }
 
-        span {
-          padding: 0 12px;
-          color: #94a3b8;
-          font-weight: 500;
+        .gd-menu-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 9px 12px;
+          border-radius: 8px;
+          font-size: 13.5px;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: background var(--transition-fast);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.08);
+          }
+
+          &.selected {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            font-weight: 600;
+          }
         }
       }
-    }
-  }
-  form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .reg-form-group {
-    width: 70%;
-    margin-bottom: 10px;
-    @include respond(phone) {
-      width: 95%;
-    }
-  }
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: rgb(251 251 251);
-    @include respond(phone) {
-      font-size: 12.3px;
-    }
-  }
-  .reg-form-group input {
-    border: none;
-    outline: none;
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    box-sizing: border-box;
-    color: #fff;
-    background-color: hsla(0, 0%, 100%, 0.07);
-
-    &:focus {
-      background-color: hsla(0, 0%, 100%, 0.07);
-    }
-    &:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0px 1000px rgb(22, 26, 32) inset;
-      color: rgb(251, 251, 251) !important; 
-      -webkit-text-fill-color: rgb(251, 251, 251) !important; 
-    }
-
-    &:-moz-autofill {
-      box-shadow: 0 0 0px 1000px rgb(22, 26, 32) inset;
-      color: rgb(251, 251, 251) !important;
-    }
-
-    &:-ms-autofill {
-      box-shadow: 0 0 0px 1000px rgb(22, 26, 32) inset;
-      color: rgb(251, 251, 251) !important;
-    }
-
-    &:-o-autofill {
-      box-shadow: 0 0 0px 1000px rgb(22, 26, 32) inset;
-      color: rgb(251, 251, 251) !important;
-    }
-
-    &:focus-within {
-      border: .1rem solid #2764ff !important;
-      box-shadow: 0 0 0 3px rgba(0, 105, 255, .16);
-    }
-
-
-  }
-
-  .passwd{
-    position: relative;
-  }
-
-  .eye-icon{
-    position: absolute;
-    right: 20px;
-    top: 35px;
-    color: rgb(28 100 224);
-    cursor: pointer;
-  }
-  .btn-register{
-    padding: 12px 60px;
-    margin-top: 10px;
-    border-radius: .55rem;
-    background-color: rgb(28 100 224);
-    width: 70%;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-  
-  }
-  .reg-link{
-    display: flex; 
-    justify-content: flex-end;
-    width: 70%;
-    margin-top: 7px;
-    @include respond(phone) {
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-    }
-    span{
-      font-size: 14px;
-      .reg-link-reg{
-        font-weight: 700;
-      }
-    }
-  }
-
-  .reg-right {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: rotate(-90deg);
-    @include respond(phone) {
-      display: none;
-    }
-    img {
-      width: 30%;
     }
   }
 }
-
