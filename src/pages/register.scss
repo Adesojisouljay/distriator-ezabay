@@ -16,6 +16,76 @@
     @include respond(phone) {
       width: 100%;
     }
+
+    .keychain-register-wrap {
+      width: 70%;
+      margin: 10px 0 6px 0;
+      @include respond(phone) {
+        width: 95%;
+      }
+
+      .keychain-register-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 13px 20px;
+        border-radius: 0.65rem;
+        border: 1px solid rgba(227, 19, 55, 0.4);
+        background: linear-gradient(170deg, rgba(35, 41, 54, 0.95), rgba(16, 21, 30, 0.98));
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+
+        &:hover {
+          background: linear-gradient(170deg, rgba(45, 52, 68, 0.98), rgba(20, 26, 38, 1));
+          border-color: rgba(227, 19, 55, 0.7);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(227, 19, 55, 0.25);
+        }
+
+        .keychain-btn-icon {
+          width: 24px;
+          height: 24px;
+          object-fit: contain;
+          border-radius: 4px;
+        }
+
+        span {
+          font-size: 15px;
+          font-weight: 600;
+          letter-spacing: -0.2px;
+
+          @include respond(phone) {
+            font-size: 13.5px;
+          }
+        }
+      }
+
+      .or-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 18px 0 12px 0;
+        color: #64748b;
+        font-size: 13px;
+
+        &::before,
+        &::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        span {
+          padding: 0 12px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+      }
+    }
   }
   form {
     width: 100%;

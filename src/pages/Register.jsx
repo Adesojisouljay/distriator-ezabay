@@ -10,6 +10,8 @@ import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { GeneralDropdown } from '../components/dropdown/GeneralDrpdpown';
 import { toast } from 'react-toastify';
 import { countriesList } from '../vairables/countries';
+import keychainLogo from '../assets/keychain-logo.png';
+import { KeychainLoginModal } from '../components/modal/KeychainLoginModal';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ const Register = () => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [openCountryList, setOpenCountryList] = useState(false);
   const [referralCode, setReferralCode] = useState(referralCodeFromURL || '');
+  const [openKeychainModal, setOpenKeychainModal] = useState(false);
 
   useEffect(() => {
     if (referralCodeFromURL) {
@@ -97,6 +100,19 @@ const Register = () => {
       <div className="reg-left">
       <h1 className="header-text">Create Account</h1>
         {loading && <Loader/>}
+        <div className="keychain-register-wrap">
+          <button
+            type="button"
+            className="keychain-register-btn"
+            onClick={() => setOpenKeychainModal(true)}
+          >
+            <img src={keychainLogo} alt="Hive Keychain" className="keychain-btn-icon" />
+            <span>Sign up with Hive Keychain</span>
+          </button>
+          <div className="or-divider">
+            <span>or register with email</span>
+          </div>
+        </div>
       <form onSubmit={handleSubmit}>
           <div className="reg-form-group">
             <label>First Name</label>
@@ -219,6 +235,15 @@ const Register = () => {
       <div className="reg-right">
       <img src={Logo} alt="" />
       </div>
+
+      {openKeychainModal && (
+        <KeychainLoginModal
+          isOpen={openKeychainModal}
+          onClose={() => setOpenKeychainModal(false)}
+          initialMode="signup"
+          defaultReferral={referralCode}
+        />
+      )}
     </div>
   );
 };

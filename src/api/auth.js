@@ -73,6 +73,22 @@ export const linkHiveKeychainApi = async ({ username, challenge, signature }) =>
       success: false,
       message: error.response?.data?.message || 'Failed to link Hive Keychain',
     };
+export const registerWithKeychainApi = async ({ registrationToken, email, firstName, lastName, country, referralCode }) => {
+  try {
+    const response = await api.post('/auth/keychain-register', {
+      registrationToken,
+      email,
+      firstName,
+      lastName,
+      country,
+      referralCode,
+    });
+    if (response?.data?.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response;
+  } catch (error) {
+    console.error('Error in Keychain register:', error);
+    return error;
   }
 };
-
