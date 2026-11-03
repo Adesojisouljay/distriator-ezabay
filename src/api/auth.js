@@ -95,3 +95,26 @@ export const registerWithKeychainApi = async ({ registrationToken, email, firstN
     return error;
   }
 };
+
+export const completeProfileApi = async ({ firstName, lastName, email, country, referralCode }) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.post(
+      '/auth/complete-profile',
+      { firstName, lastName, email, country, referralCode },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error in completeProfileApi:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to complete profile.',
+    };
+  }
+};
+
