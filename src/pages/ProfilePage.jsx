@@ -271,7 +271,11 @@ export const Profile = () => {
               </div>
               <div className="stat-info">
                 <span className="stat-label">EzaPoints</span>
-                <span className="stat-value">{user?.ezaPoints?.balance || 0} pts</span>
+                <span className="stat-value">
+                  {typeof user?.ezaPoints?.balance === 'number'
+                    ? user.ezaPoints.balance
+                    : (user?.ezaPoints?.balance?.default ?? 0)} pts
+                </span>
               </div>
             </div>
 

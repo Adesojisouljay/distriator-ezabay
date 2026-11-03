@@ -114,7 +114,11 @@ const Spinner = () => {
       <div className="spinner-main-container">
         <div className='spinner-top-wrapper'>
           <div className="spinner-data-wrapper">
-            <span>Ezapoint Balance: {user?.ezaPoints?.balance || 0}</span>
+            <span>
+              Ezapoint Balance: {typeof user?.ezaPoints?.balance === 'number'
+                ? user.ezaPoints.balance
+                : (user?.ezaPoints?.balance?.default ?? 0)}
+            </span>
             <span>Total Hive Won: {user?.totalHiveWon || 0}</span>
             <span>Total Spins: {user?.totalWheelSpun || 0}</span>
             <span>Pending Rewards: {user?.pendingSpinHiveReward || 0}</span>
