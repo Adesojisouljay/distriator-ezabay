@@ -33,9 +33,8 @@ import { BuySell } from '../components/modal/BuySell';
 import { SendOptions } from '../components/modal/sendOptions';
 
 // Whitelist of coins finalized for production deployment
-// Add coin symbols or IDs here to activate their "Add" button
-// Note: Bitcoin (BTC) is deactivated until the next release with HD wallet derivation
-const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd'];
+// Bitcoin, USDT BEP-20, and BNB (BSC) are fully integrated with our unified HD wallet infrastructure
+const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc', 'tether', 'usdt', 'binancecoin', 'bnb'];
 
 export const WalletPage = () => {
   const [cryptoData, setCryptoData] = useState([]);
@@ -119,7 +118,14 @@ export const WalletPage = () => {
   };
 
   const isAssetAdded = (coinId) => {
-    return assets.some((a) => a.coinId === coinId);
+    if (!coinId) return false;
+    const cleanId = coinId.toString().toLowerCase();
+    return assets.some(
+      (a) =>
+        a.coinId?.toString().toLowerCase() === cleanId ||
+        a.currency?.toString().toLowerCase() === cleanId ||
+        a.symbol?.toString().toLowerCase() === cleanId
+    );
   };
 
   // Filter user assets

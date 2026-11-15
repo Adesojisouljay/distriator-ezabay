@@ -147,6 +147,25 @@ body {
   scroll-behavior: smooth;
   background-color: transparent;
   box-sizing: border-box;
+  transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @media (min-width: 768px) {
+    &.sidebar-expanded {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+    }
+
+    &.sidebar-collapsed {
+      margin-left: 68px;
+      width: calc(100% - 68px);
+    }
+  }
+
+  @media (max-width: 767px) {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
 }
 
 .home-wrap{

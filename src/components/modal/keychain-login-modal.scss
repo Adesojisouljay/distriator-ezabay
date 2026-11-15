@@ -2,17 +2,17 @@
 
 .keychain-login-modal {
   position: relative;
-  max-width: 460px !important;
-  padding: 32px 28px !important;
+  max-width: 480px !important;
+  padding: 30px 26px !important;
   background: linear-gradient(150deg, #131b2e 0%, #0c111d 100%) !important;
   border: 1px solid rgba(227, 19, 55, 0.25) !important;
-  border-radius: 20px !important;
+  border-radius: 22px !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(227, 19, 55, 0.1) !important;
   color: #fff;
 
   @include respond(phone) {
     padding: 24px 18px !important;
-    max-width: 92% !important;
+    max-width: 94% !important;
   }
 
   .keychain-close-btn {
@@ -40,29 +40,30 @@
 
   .keychain-header {
     text-align: center;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
 
     .keychain-logo-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-      background: radial-gradient(circle, rgba(227, 19, 55, 0.18) 0%, rgba(227, 19, 55, 0.04) 70%);
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: radial-gradient(circle, rgba(227, 19, 55, 0.2) 0%, rgba(227, 19, 55, 0.04) 70%);
       border: 1px solid rgba(227, 19, 55, 0.35);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       box-shadow: 0 0 20px rgba(227, 19, 55, 0.25);
 
       img {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         object-fit: contain;
+        border-radius: 8px;
       }
     }
 
     h2 {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 700;
       color: #ffffff;
       margin: 0 0 6px 0;
@@ -74,7 +75,51 @@
       color: #94a3b8;
       line-height: 1.45;
       margin: 0 auto;
-      max-width: 340px;
+      max-width: 360px;
+    }
+  }
+
+  /* Method Switcher Tabs */
+  .keychain-tab-bar {
+    display: flex;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.8);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    margin-bottom: 18px;
+
+    .keychain-tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+
+      &:hover:not(:disabled) {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      &.active {
+        color: #ffffff;
+        background: linear-gradient(135deg, rgba(227, 19, 55, 0.85) 0%, rgba(179, 15, 44, 0.95) 100%);
+        box-shadow: 0 2px 10px rgba(227, 19, 55, 0.35);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -83,7 +128,7 @@
     border: 1px solid rgba(245, 158, 11, 0.3);
     border-radius: 12px;
     padding: 12px 14px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     font-size: 12.5px;
     color: #fbbf24;
 
@@ -94,28 +139,36 @@
     }
 
     p {
-      margin: 0 0 6px 0;
+      margin: 0 0 8px 0;
       color: #fde68a;
       line-height: 1.35;
     }
 
-    .keychain-install-link {
-      display: inline-block;
-      color: #f59e0b;
+    .btn-switch-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      color: #fef3c7;
+      font-size: 12px;
       font-weight: 600;
-      text-decoration: underline;
-      transition: color 0.15s ease;
+      cursor: pointer;
+      transition: background 0.15s ease;
 
       &:hover {
-        color: #fcd34d;
+        background: rgba(245, 158, 11, 0.3);
       }
     }
   }
 
-  .keychain-form {
+  .keychain-form,
+  .keychain-mobile-view {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 15px;
 
     .keychain-input-group {
       display: flex;
@@ -168,11 +221,152 @@
           }
         }
       }
+    }
 
-      .keychain-input-hint {
-        font-size: 11.5px;
+    /* Mobile QR Section */
+    .keychain-qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 4px;
+
+      .keychain-qr-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: scale(1.02);
+
+          .keychain-qr-card {
+            box-shadow: 0 0 25px rgba(227, 19, 55, 0.35);
+            border-color: rgba(227, 19, 55, 0.6);
+          }
+        }
+
+        .keychain-qr-card {
+          padding: 14px;
+          background: #ffffff;
+          border-radius: 16px;
+          border: 2px solid rgba(227, 19, 55, 0.35);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 18px rgba(227, 19, 55, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+
+          svg {
+            display: block;
+          }
+        }
+
+        .keychain-qr-badge {
+          margin-top: 8px;
+          padding: 4px 12px;
+          background: rgba(16, 185, 129, 0.12);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          border-radius: 999px;
+          font-size: 11.5px;
+          color: #34d399;
+          font-weight: 500;
+        }
+      }
+
+      .keychain-mobile-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+
+        .btn-open-keychain-app {
+          width: 100%;
+          padding: 13px 18px;
+          background: linear-gradient(135deg, #e31337 0%, #b30f2c 100%);
+          color: #fff;
+          font-size: 15px;
+          font-weight: 600;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          box-shadow: 0 4px 18px rgba(227, 19, 55, 0.35);
+          transition: all 0.15s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(227, 19, 55, 0.45);
+          }
+        }
+
+        .btn-keychain-browser-fallback {
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(15, 23, 42, 0.7);
+          border: 1px solid rgba(148, 163, 184, 0.25);
+          border-radius: 10px;
+          color: #cbd5e1;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.15s ease;
+
+          &:hover {
+            color: #fff;
+            border-color: rgba(148, 163, 184, 0.45);
+            background: rgba(30, 41, 59, 0.8);
+          }
+        }
+      }
+    }
+
+    .keychain-qr-prompt {
+      p {
+        font-size: 13.5px;
+        color: #94a3b8;
+        line-height: 1.45;
+        margin: 0 0 12px 0;
+
+        strong {
+          color: #fff;
+        }
+      }
+    }
+
+    .keychain-mobile-footer-hints {
+      text-align: center;
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+
+      .hint-title {
+        display: block;
+        font-size: 12px;
         color: #64748b;
-        margin-top: 2px;
+        margin-bottom: 4px;
+      }
+
+      .hint-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 12px;
+
+        a {
+          color: #38bdf8;
+          text-decoration: none;
+          font-weight: 500;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        span {
+          color: #475569;
+        }
       }
     }
 
@@ -197,15 +391,6 @@
       padding: 10px 14px;
       color: #93c5fd;
       font-size: 13px;
-
-      .keychain-status-pulse {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #3b82f6;
-        animation: pulseDot 1.4s infinite ease-in-out;
-        flex-shrink: 0;
-      }
     }
 
     .keychain-actions {
@@ -276,15 +461,4 @@
   inset: 0;
   width: 100%;
   height: 100%;
-}
-
-@keyframes pulseDot {
-  0%, 100% {
-    transform: scale(0.9);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 1;
-  }
 }

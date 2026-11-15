@@ -21,6 +21,11 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedMemo, setCopiedMemo] = useState(false);
 
+  const isHiveAsset = selectedAsset?.currency === 'hive' || selectedAsset?.currency === 'hbd' || selectedAsset?.coinId === 'hive' || selectedAsset?.coinId === 'hive_dollar';
+  const isBtc = selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin' || selectedAsset?.symbol?.toLowerCase() === 'btc';
+  const isUsdt = selectedAsset?.currency === 'tether' || selectedAsset?.coinId === 'tether' || selectedAsset?.symbol?.toLowerCase() === 'usdt';
+  const isBnb = selectedAsset?.currency === 'binancecoin' || selectedAsset?.currency === 'bnb' || selectedAsset?.coinId === 'binancecoin' || selectedAsset?.coinId === 'bnb' || selectedAsset?.symbol?.toLowerCase() === 'bnb';
+
   const handleCopyAddress = () => {
     if (!selectedAsset?.depositAddress) return;
     navigator.clipboard.writeText(selectedAsset.depositAddress);
@@ -45,12 +50,21 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
     setLoading(true);
     try {
       const respone = await generateAddress(symbol);
-      if (respone.success) {
-        toast.success("Account address generated successfully");
-        getUserProfile(dispatch);
+      if (respone && respone.success) {
+        toast.success(respone.message || "Account address generated successfully");
+        await getUserProfile(dispatch);
+        if (respone.depositAddress) {
+          setSelectedAsset((prev) => ({
+            ...prev,
+            depositAddress: respone.depositAddress,
+            memo: respone.memo !== undefined ? respone.memo : prev?.memo,
+          }));
+        }
+      } else {
+        toast.error(respone?.message || "Failed to generate deposit address");
       }
     } catch (error) {
-      toast.error(error.message || "Failed to generate address");
+      toast.error(error?.message || "Failed to generate address");
     } finally {
       setLoading(false);
     }
@@ -74,7 +88,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
                 <img className="d-coin-wrap" src={selectedAsset.image} alt={selectedAsset.currency} />
               )}
               <span className="d-picker-currency">
-                {selectedAsset?.symbol || selectedAsset?.currency || 'Select Coin'}
+                {selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency || 'Select Coin'}
               </span>
               <RiArrowDownSFill size={20} />
             </div>
@@ -124,16 +138,55 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           ) : (
             <div className="deposit-address">
               <span className="field-label">Deposit Address</span>
+              {(isBtc || isUsdt || isBnb) ? (
+                <div className="wrap generate-address-wrap">
+                  <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
+                    No deposit address generated yet
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-generate-deposit"
+                    disabled={loading}
+                    onClick={() => createAddress(selectedAsset?.coinId || selectedAsset?.currency)}
+                  >
+                    {loading ? 'Generating...' : 'Generate Address'}
+                  </button>
+                </div>
+              ) : (
+                <div className="wrap">
+                  <span className="val-text" style={{ color: '#f59e0b', fontSize: '13px' }}>
+                    {selectedAsset?.currency ? selectedAsset.currency.toUpperCase() : 'This asset'} deposit is coming soon...
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Network Badges for Multi-Chain Assets */}
+          {(isUsdt || isBnb) && (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Network</span>
               <div className="wrap">
-                <span className="val-text" style={{ color: '#f59e0b' }}>
-                  {selectedAsset?.currency || 'This asset'} deposit address is coming soon...
+                <span className="val-text" style={{ fontWeight: 600, color: '#10b981' }}>
+                  BEP-20 (BNB Smart Chain)
                 </span>
               </div>
             </div>
           )}
 
-          {/* Deposit Memo (if applicable) */}
-          {selectedAsset?.memo && (
+          {isBtc && (
+            <div className="deposit-address">
+              <span className="field-label">Deposit Network</span>
+              <div className="wrap">
+                <span className="val-text" style={{ fontWeight: 600, color: '#f59e0b' }}>
+                  Bitcoin (Native SegWit Bech32)
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Deposit Memo (ONLY for Hive & HBD) */}
+          {isHiveAsset && selectedAsset?.memo && (
             <>
               <div className="deposit-address">
                 <span className="field-label">Deposit Memo</span>
@@ -167,7 +220,14 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
         <div className="note-wrap">
           <header>Deposit Notice</header>
           <ul>
-            <li>Send only {selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency} to this deposit address.</li>
+            <li>
+              Send only {isUsdt ? 'USDT via BEP-20 (BNB Smart Chain)' : (isBnb ? 'BNB via BEP-20 (BNB Smart Chain)' : (selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency))} to this deposit address.
+            </li>
+            {(isUsdt || isBnb) && (
+              <li style={{ color: '#10b981', fontWeight: 500 }}>
+                Only send via the BNB Smart Chain (BEP-20). Transfers via other chains cannot be processed.
+              </li>
+            )}
             <li>Credits are applied after standard blockchain network confirmations.</li>
           </ul>
         </div>

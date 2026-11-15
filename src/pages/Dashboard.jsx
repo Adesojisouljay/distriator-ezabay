@@ -34,6 +34,7 @@ import { GeneralDropdown } from "../components/dropdown/GeneralDrpdpown";
 import TransactionList from "../components/modal/TransactionList";
 import { InternalTransferModal } from "../components/modal/InternalTransferModal";
 import { ComingSoon } from "../components/modal/CommingSoon";
+import { CompleteProfileModal } from "../components/modal/CompleteProfileModal";
 
 export const Dashboard = () => {
   const user = useSelector((state) => state.ekzaUser?.user);
@@ -62,6 +63,21 @@ export const Dashboard = () => {
   const [assetOpen, setAssetOpen] = useState(false)
   const [trxListData, setTrxListData] = useState(null);
   const [comingSoon, setComingSoonOpen] = useState(false);
+  const [completeProfileOpen, setCompleteProfileOpen] = useState(false);
+
+  const isProfileIncomplete = Boolean(
+    user && (user.isProfileComplete === false || user.email?.includes('@hive.ezabay.internal'))
+  );
+
+  useEffect(() => {
+    if (isProfileIncomplete) {
+      const alreadyPrompted = sessionStorage.getItem('ezabay_profile_prompted');
+      if (!alreadyPrompted) {
+        setCompleteProfileOpen(true);
+        sessionStorage.setItem('ezabay_profile_prompted', 'true');
+      }
+    }
+  }, [isProfileIncomplete]);
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -231,6 +247,26 @@ export const Dashboard = () => {
       <div className="dashboard-content">
         <div className="greetings-container">
         </div>
+
+        {/* Action Recommended: Complete Profile Banner */}
+        {isProfileIncomplete && (
+          <div className="profile-completion-banner">
+            <div className="banner-icon-text">
+              <span className="banner-badge">Profile Setup</span>
+              <p className="banner-message">
+                Welcome to Ezabay, <strong>@{user?.hiveUsername || user?.username}</strong>! Please complete your profile to enable deposit notifications, bank withdrawals & receipts.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="banner-action-btn"
+              onClick={() => setCompleteProfileOpen(true)}
+            >
+              Complete Profile &rarr;
+            </button>
+          </div>
+        )}
+
         <div className="dashboard-content-wrap">
           {/* Left Card: Main Balance Hero Card (Matching Screenshot 1) */}
           <div className="dashboard-main border-transparent">
@@ -495,6 +531,13 @@ export const Dashboard = () => {
           // inrernalClose={closeInternalWithdrawalModal}
           openOnchain={openWithdrawalModal}
         />}
+
+      {completeProfileOpen && (
+        <CompleteProfileModal
+          isOpen={completeProfileOpen}
+          onClose={() => setCompleteProfileOpen(false)}
+        />
+      )}
     </div>
   );
 }
