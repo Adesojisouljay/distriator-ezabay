@@ -33,8 +33,8 @@ import { BuySell } from '../components/modal/BuySell';
 import { SendOptions } from '../components/modal/sendOptions';
 
 // Whitelist of coins finalized for production deployment
-// Bitcoin and USDT BEP-20 are fully integrated with our unified HD wallet infrastructure
-const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc', 'tether', 'usdt'];
+// Bitcoin, USDT BEP-20, and BNB (BSC) are fully integrated with our unified HD wallet infrastructure
+const FINALIZED_PRODUCTION_COINS = ['hive', 'hive_dollar', 'hbd', 'bitcoin', 'btc', 'tether', 'usdt', 'binancecoin', 'bnb'];
 
 export const WalletPage = () => {
   const [cryptoData, setCryptoData] = useState([]);

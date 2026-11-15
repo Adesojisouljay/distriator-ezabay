@@ -24,6 +24,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
   const isHiveAsset = selectedAsset?.currency === 'hive' || selectedAsset?.currency === 'hbd' || selectedAsset?.coinId === 'hive' || selectedAsset?.coinId === 'hive_dollar';
   const isBtc = selectedAsset?.currency === 'bitcoin' || selectedAsset?.coinId === 'bitcoin' || selectedAsset?.symbol?.toLowerCase() === 'btc';
   const isUsdt = selectedAsset?.currency === 'tether' || selectedAsset?.coinId === 'tether' || selectedAsset?.symbol?.toLowerCase() === 'usdt';
+  const isBnb = selectedAsset?.currency === 'binancecoin' || selectedAsset?.currency === 'bnb' || selectedAsset?.coinId === 'binancecoin' || selectedAsset?.coinId === 'bnb' || selectedAsset?.symbol?.toLowerCase() === 'bnb';
 
   const handleCopyAddress = () => {
     if (!selectedAsset?.depositAddress) return;
@@ -137,7 +138,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           ) : (
             <div className="deposit-address">
               <span className="field-label">Deposit Address</span>
-              {(isBtc || isUsdt) ? (
+              {(isBtc || isUsdt || isBnb) ? (
                 <div className="wrap generate-address-wrap">
                   <span className="val-text" style={{ color: '#94a3b8', fontSize: '13px' }}>
                     No deposit address generated yet
@@ -162,7 +163,7 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           )}
 
           {/* Network Badges for Multi-Chain Assets */}
-          {isUsdt && (
+          {(isUsdt || isBnb) && (
             <div className="deposit-address">
               <span className="field-label">Deposit Network</span>
               <div className="wrap">
@@ -220,11 +221,11 @@ export const DepositHiveModal = ({ isOpen, onClose, assets, user }) => {
           <header>Deposit Notice</header>
           <ul>
             <li>
-              Send only {isUsdt ? 'USDT via BEP-20 (BNB Smart Chain)' : (selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency)} to this deposit address.
+              Send only {isUsdt ? 'USDT via BEP-20 (BNB Smart Chain)' : (isBnb ? 'BNB via BEP-20 (BNB Smart Chain)' : (selectedAsset?.symbol?.toUpperCase() || selectedAsset?.currency))} to this deposit address.
             </li>
-            {isUsdt && (
+            {(isUsdt || isBnb) && (
               <li style={{ color: '#10b981', fontWeight: 500 }}>
-                Only send USDT via the BNB Smart Chain (BEP-20). Transfers via TRC-20, ERC-20, or other chains cannot be processed.
+                Only send via the BNB Smart Chain (BEP-20). Transfers via other chains cannot be processed.
               </li>
             )}
             <li>Credits are applied after standard blockchain network confirmations.</li>
